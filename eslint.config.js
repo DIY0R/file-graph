@@ -42,6 +42,15 @@ export default tseslint.config(
       ...eslintConfigPrettier.rules,
       'max-lines': ['warn', { max: 124 }],
       'max-params': ['error', 3],
+      'no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
+      'prettier/prettier': [
+        'error',
+        {
+          endOfLine: 'auto',
+        },
+      ],
     },
   },
 );
