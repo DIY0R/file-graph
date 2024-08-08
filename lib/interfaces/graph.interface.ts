@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { IVertex } from './params.interface';
 
 export abstract class FileGraphAbstract {
   /**
@@ -9,11 +10,15 @@ export abstract class FileGraphAbstract {
    */
   public abstract createVertex<T extends object>(
     model: T,
-  ): Promise<crypto.UUID>; /**
-   * Finds a vertex by its unique identifier.
+  ): Promise<crypto.UUID>;
+
+  /**
+   * Searches for a model in the storage file that matches the given predicate.
    *
-   * @param {string} id - The unique identifier of the vertex.
-   * @returns {Promise<Object|null>} A promise that resolves to the vertex object if found, or null if not found.
+   * @param {function(T): boolean} predicate - A function that takes a model as input and returns `true` if the model matches the search criteria, otherwise `false`.
+   * @returns {Promise<T | null>} A promise that resolves to the found model if a match is found, or `null` if no match is found.
    */
-  public abstract findById(id: crypto.UUID): Promise<object | null>;
+  public abstract findOne<T extends object>(
+    predicate: (model: T | IVertex) => boolean,
+  ): Promise<object | null>;
 }

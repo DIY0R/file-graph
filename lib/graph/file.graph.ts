@@ -1,17 +1,19 @@
 import { UUID } from 'crypto';
-import { FileGraphAbstract } from '../interfaces';
+import { FileGraphAbstract, IVertex } from '../interfaces';
 import { StorageFile } from './storage.file';
 import { uuid } from '../utils';
 
-class FileGraphIml implements FileGraphAbstract {
+class FileGraphIml<T extends IVertex> implements FileGraphAbstract {
   constructor(private readonly storageFile: StorageFile) {}
   public async createVertex<T extends object>(model: T): Promise<UUID> {
     const id = uuid();
-    await this.storageFile.writeModel({ [id]: model });
+    await this.storageFile.appendFile({ id, ...model });
     return id;
   }
-  public async findById(id: string): Promise<object | null> {
-    return this.storageFile.search(id);
+  public async findOne<T extends object>(
+    predicate: (model: T & IVertex) => boolean,
+  ): Promise<(T & IVertex) | null> {
+    return this.storageFile.searchLine(predicate);
   }
 }
 
