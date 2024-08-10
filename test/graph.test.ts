@@ -32,4 +32,13 @@ describe('FileGraph CRUD Operations', () => {
 
     assert.strictEqual(foundVertex?.name, 'Dupo');
   });
+
+  it('should create a vertex and delete it', async () => {
+    const createdVertexId = await graph.createVertex(myVertex);
+    const deleteVertex = await graph.deleteVertex<typeof myVertex>(
+      vertex => vertex.id === createdVertexId,
+    );
+
+    assert.equal(deleteVertex, true);
+  });
 });
