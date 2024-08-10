@@ -7,7 +7,7 @@ export default {
       [
         'feat',
         'fix',
-        'refact',
+        'refactor',
         'chore',
         'doc',
         'test',
