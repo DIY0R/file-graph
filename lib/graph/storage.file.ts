@@ -4,6 +4,7 @@ import {
   promises as fsPromises,
 } from 'fs';
 import { appendFile } from 'fs/promises';
+import { uuid } from '../utils';
 import readline from 'readline';
 
 export class StorageFile {
@@ -28,7 +29,7 @@ export class StorageFile {
   public async updateLine<T extends object>(
     updater: (vertex: T) => object,
   ): Promise<boolean> {
-    const tempPath = `${this.path}.tmp`;
+    const tempPath = `${this.path}.${uuid()}.tmp`;
     let updated = false;
     const fileStream = this.createLineStream();
     const tempStream = createWriteStream(tempPath, { encoding: 'utf8' });
