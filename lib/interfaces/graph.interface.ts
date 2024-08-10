@@ -1,4 +1,4 @@
-import { IVertex, uuidType } from './params.interface';
+import { IPredicate, IUpdater, uuidType } from './params.interface';
 
 export abstract class FileGraphAbstract {
   /**
@@ -16,7 +16,7 @@ export abstract class FileGraphAbstract {
    * @returns {Promise<T | null>} A promise that resolves to the found vertex if a match is found, or `null` if no match is found.
    */
   public abstract findOne<T extends object>(
-    predicate: (vertex: T | IVertex) => boolean,
+    predicate: IPredicate<T>,
   ): Promise<object | null>;
   /**
    * Updates a vertex record in the storage that matches the given condition.
@@ -30,6 +30,21 @@ export abstract class FileGraphAbstract {
    * @returns {Promise<boolean>} A promise that resolves to `true` if the record was successfully updated, and `false` if the record was not found or an error occurred.
    */
   public abstract updateVertex<T extends object>(
-    updater: (vertex: T & IVertex) => (T & IVertex) | object,
+    updater: IUpdater<T>,
+  ): Promise<boolean>;
+
+  /**
+   * Deletes a vertex record in the storage that matches the given condition.
+   *
+   * This method searches for a record that satisfies the condition specified by the `predicate` function
+   * and deletes it if the condition is met. The `predicate` function should return `true` for the vertex
+   * that needs to be deleted.
+   *
+   * @template T The type of the vertex object, which must conform to the {@link IVertex} interface.
+   * @param {Function} predicate A function that takes a vertex object {@link T & IVertex} and returns `true` if the vertex should be deleted.
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the record was successfully deleted, and `false` if the record was not found or an error occurred.
+   */
+  public abstract deleteVertex<T extends object>(
+    predicate: IPredicate<T>,
   ): Promise<boolean>;
 }
