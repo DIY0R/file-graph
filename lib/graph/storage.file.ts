@@ -10,11 +10,13 @@ import { IPredicate, IUpdater, IVertex } from '../interfaces';
 
 export class StorageFile {
   constructor(private readonly path: string) {}
+
   public async appendFile<T extends object>(vertex: T): Promise<T> {
     const vertexSer = this.serializer(vertex);
     await appendFile(this.path, vertexSer + '\n');
     return vertex;
   }
+
   public async searchLine<T extends object>(
     predicate: IPredicate<T>,
   ): Promise<any> {
@@ -25,6 +27,7 @@ export class StorageFile {
     });
     return findVertex ?? null;
   }
+
   public async updateLine<T extends object>(
     updater: IPredicate<T> | IUpdater<T>,
   ): Promise<boolean> {
@@ -57,26 +60,22 @@ export class StorageFile {
 
     return updated;
   }
+
   private createLineStream() {
     const fileStream = createReadStream(this.path, 'utf8');
     const rl = readline.createInterface({
       input: fileStream,
       crlfDelay: Infinity,
     });
+
     return async (fn: (line: string) => Promise<any>) => {
       try {
         for await (const line of rl) {
-          if (line.trim()) {
-            const result = await fn(line);
-            if (result) {
-              rl.close();
-              fileStream.destroy();
-              return result;
-            }
-          }
+          const result = await fn(line);
+          if (result) return result;
         }
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        console.error(error);
       } finally {
         rl.close();
         fileStream.destroy();
