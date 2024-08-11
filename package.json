@@ -1,6 +1,6 @@
 {
   "name": "file-graph",
-  "version": "0.0.1",
+  "version": "0.3.23",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
