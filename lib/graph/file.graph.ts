@@ -6,10 +6,13 @@ import {
   uuidType,
 } from '../interfaces';
 import { StorageFile } from './storage.file';
-import { uuid } from '../utils';
+import { AsyncTaskQueue, uuid } from '../utils';
 
 class FileGraphIml implements FileGraphAbstract {
-  constructor(private readonly storageFile: StorageFile) {}
+  constructor(
+    private readonly storageFile: StorageFile,
+    private readonly asyncTaskQueue: AsyncTaskQueue,
+  ) {}
   public async createVertex<T extends object>(vertex: T): Promise<uuidType> {
     const id = uuid();
     await this.storageFile.appendFile<T>({ id, ...vertex });
@@ -23,14 +26,18 @@ class FileGraphIml implements FileGraphAbstract {
   public updateVertex<T extends object>(
     updater: IUpdater<T>,
   ): Promise<boolean> {
-    return this.storageFile.updateLine(updater);
+    return this.asyncTaskQueue.addTask(() =>
+      this.storageFile.updateLine(updater),
+    );
   }
   public deleteVertex<T extends object>(
     predicate: IPredicate<T>,
   ): Promise<boolean> {
-    return this.storageFile.updateLine(predicate);
+    return this.asyncTaskQueue.addTask(() =>
+      this.storageFile.updateLine(predicate),
+    );
   }
 }
 
 export const FileGraph = (path: `${string}.txt`) =>
-  new FileGraphIml(new StorageFile(path));
+  new FileGraphIml(new StorageFile(path), new AsyncTaskQueue());
