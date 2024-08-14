@@ -13,14 +13,18 @@ class FileGraphIml implements FileGraphAbstract {
     private readonly storageFile: StorageFile,
     private readonly asyncTaskQueue: AsyncTaskQueue,
   ) {}
-  public async createVertex<T extends object>(vertex: T): Promise<uuidType> {
+  public async createVertex<T extends object>(data: T): Promise<uuidType> {
     const id = uuid();
-    await this.storageFile.appendFile<T>({ id, ...vertex });
+    await this.storageFile.appendFile<IVertex<T>>({
+      id,
+      data,
+      arcs: [],
+    });
     return id;
   }
   public async findOne<T extends object>(
     predicate: IPredicate<T>,
-  ): Promise<(T & IVertex) | null> {
+  ): Promise<IVertex<T> | null> {
     return this.storageFile.searchLine(predicate);
   }
   public updateVertex<T extends object>(

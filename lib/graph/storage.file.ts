@@ -5,7 +5,7 @@ import {
 } from 'fs';
 import { appendFile } from 'fs/promises';
 import readline from 'readline';
-import { uuid } from '../utils';
+import { mergeVertices, uuid } from '../utils';
 import { IPredicate, IUpdater, IVertex } from '../interfaces';
 
 export class StorageFile {
@@ -22,7 +22,7 @@ export class StorageFile {
   ): Promise<any> {
     const fileStream = this.createLineStream();
     const findVertex = await fileStream(async line => {
-      const vertex = this.deserializer(line) as T & IVertex;
+      const vertex = this.deserializer(line) as IVertex<T>;
       if (predicate(vertex)) return vertex;
     });
     return findVertex ?? null;
@@ -36,12 +36,11 @@ export class StorageFile {
     const fileStream = this.createLineStream();
     const tempStream = createWriteStream(tempPath, { encoding: 'utf8' });
     await fileStream(async line => {
-      const vertex = this.deserializer(line) as T & IVertex;
+      const vertex = this.deserializer(line) as IVertex<T>;
       const updaterVertex = updater(vertex);
       if (typeof updaterVertex === 'object' && updaterVertex !== null) {
-        tempStream.write(
-          this.serializer({ ...vertex, ...updaterVertex }) + '\n',
-        );
+        const newVertices = mergeVertices(vertex, updaterVertex);
+        tempStream.write(this.serializer(newVertices) + '\n');
         return void (updated = true);
       }
       if (updaterVertex === true) return void (updated = true);
