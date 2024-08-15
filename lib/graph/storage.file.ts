@@ -25,7 +25,7 @@ export class StorageFile {
       const vertex = this.deserializer(line) as IVertex<T>;
       if (predicate(vertex)) return vertex;
     });
-    return findVertex ?? null;
+    return findVertex;
   }
 
   public async updateLine<T extends object>(
@@ -35,27 +35,32 @@ export class StorageFile {
     let updated = false;
     const fileStream = this.createLineStream();
     const tempStream = createWriteStream(tempPath, { encoding: 'utf8' });
-    await fileStream(async line => {
-      const vertex = this.deserializer(line) as IVertex<T>;
-      const updaterVertex = updater(vertex);
-      if (typeof updaterVertex === 'object' && updaterVertex !== null) {
-        const newVertices = mergeVertices(vertex, updaterVertex);
-        tempStream.write(this.serializer(newVertices) + '\n');
-        return void (updated = true);
-      }
-      if (updaterVertex === true) return void (updated = true);
-      tempStream.write(line + '\n');
-    });
-    tempStream.end();
-    await new Promise<void>((resolve, reject) => {
-      tempStream.on('finish', () => {
-        fsPromises
-          .rename(tempPath, this.path)
-          .then(() => resolve())
-          .catch(reject);
+    try {
+      await fileStream(async line => {
+        const vertex = this.deserializer(line) as IVertex<T>;
+        const updaterVertex = updater(vertex);
+        if (typeof updaterVertex === 'object' && updaterVertex !== null) {
+          const newVertices = mergeVertices(vertex, updaterVertex);
+          tempStream.write(this.serializer(newVertices) + '\n');
+          return void (updated = true);
+        }
+        if (updaterVertex === true) return void (updated = true);
+        tempStream.write(line + '\n');
       });
-      tempStream.on('error', reject);
-    });
+
+      tempStream.end();
+      await new Promise<void>((resolve, reject) => {
+        tempStream.on('finish', () => {
+          fsPromises.rename(tempPath, this.path).then(resolve).catch(reject);
+        });
+        tempStream.on('error', reject);
+      });
+    } catch (error) {
+      await fsPromises.unlink(tempPath);
+      throw error;
+    } finally {
+      tempStream.end();
+    }
 
     return updated;
   }
@@ -67,18 +72,14 @@ export class StorageFile {
       crlfDelay: Infinity,
     });
 
-    return async (fn: (line: string) => Promise<any>) => {
-      try {
-        for await (const line of rl) {
-          const result = await fn(line);
-          if (result) return result;
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        rl.close();
-        fileStream.destroy();
+    return async (read: (line: string) => Promise<any>) => {
+      for await (const line of rl) {
+        const result = await read(line);
+        if (result) return result;
       }
+      rl.close();
+      fileStream.destroy();
+
       return null;
     };
   }

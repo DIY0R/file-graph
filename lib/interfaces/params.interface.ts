@@ -8,4 +8,6 @@ export interface IVertex<T extends object> {
 }
 
 export type IPredicate<T extends object> = (vertex: IVertex<T>) => boolean;
-export type IUpdater<T extends object> = (vertex: IVertex<T>) => any;
+export type IUpdater<T extends object> = (
+  vertex: IVertex<T>,
+) => IVertex<T> | object;

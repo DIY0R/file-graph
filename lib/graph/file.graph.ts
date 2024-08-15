@@ -22,7 +22,7 @@ class FileGraphIml implements FileGraphAbstract {
     });
     return id;
   }
-  public async findOne<T extends object>(
+  public findOne<T extends object>(
     predicate: IPredicate<T>,
   ): Promise<IVertex<T> | null> {
     return this.storageFile.searchLine(predicate);
@@ -40,6 +40,31 @@ class FileGraphIml implements FileGraphAbstract {
     return this.asyncTaskQueue.addTask(() =>
       this.storageFile.updateLine(predicate),
     );
+  }
+  public createArc(
+    sourceVertexId: uuidType,
+    targetVertexId: uuidType,
+  ): Promise<boolean> {
+    return this.asyncTaskQueue.addTask<boolean>(async () => {
+      const targetVertexExists = await this.storageFile.searchLine(
+        vertex => vertex.id === targetVertexId,
+      );
+      if (!targetVertexExists)
+        throw new Error(`Cannot find targetVertexId: ${targetVertexId}`);
+
+      const updateResult = await this.storageFile.updateLine(vertex => {
+        if (vertex.id === sourceVertexId) {
+          if (vertex.arcs.includes(targetVertexId)) {
+            throw new Error(
+              `targetVertexId: ${targetVertexId} already exists in vertex ${sourceVertexId}`,
+            );
+          }
+          return { arcs: [...vertex.arcs, targetVertexId] };
+        }
+      });
+
+      return updateResult;
+    });
   }
 }
 

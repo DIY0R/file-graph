@@ -47,4 +47,21 @@ export abstract class FileGraphAbstract {
   public abstract deleteVertex<T extends object>(
     predicate: IPredicate<T>,
   ): Promise<boolean>;
+
+  /**
+   * Creates an arc (edge) from one vertex to another in the graph.
+   *
+   * This method connects the vertex with the specified `sourceVertexId` to the vertex with the specified `targetVertexId`.
+   * If the target vertex does not exist or the arc already exists, an error will be thrown.
+   *
+   * @param {uuidType} sourceVertexId - The ID of the vertex from which the arc originates.
+   * @param {uuidType} targetVertexId - The ID of the vertex to which the arc points.
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the arc was successfully created,
+   *                              or `false` if the arc already exists.
+   * @throws {Error} Throws an error if the target vertex does not exist or if an error occurs during the update.
+   */
+  public abstract createArc(
+    sourceVertexId: uuidType,
+    targetVertexId: uuidType,
+  ): Promise<boolean>;
 }
