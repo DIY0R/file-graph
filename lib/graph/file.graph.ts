@@ -45,24 +45,43 @@ class FileGraphIml implements FileGraphAbstract {
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
   ): Promise<boolean> {
+    return this.updateArc(targetVertexId, vertex => {
+      if (vertex.id !== sourceVertexId) return;
+      if (!vertex.arcs.includes(targetVertexId))
+        return { arcs: [...vertex.arcs, targetVertexId] };
+
+      throw new Error(
+        `targetVertexId: ${targetVertexId} already exists in vertex ${sourceVertexId}`,
+      );
+    });
+  }
+
+  public removeArc(
+    sourceVertexId: uuidType,
+    targetVertexId: uuidType,
+  ): Promise<boolean> {
+    return this.updateArc(targetVertexId, vertex => {
+      if (vertex.id !== sourceVertexId) return;
+      if (vertex.arcs.includes(targetVertexId))
+        return { arcs: vertex.arcs.filter(v => v !== targetVertexId) };
+
+      throw new Error(
+        `targetVertexId: ${targetVertexId} don't exists in vertex ${sourceVertexId}`,
+      );
+    });
+  }
+
+  private updateArc(
+    targetVertexId: uuidType,
+    updater: IPredicate<object> | IUpdater<object>,
+  ): Promise<boolean> {
     return this.asyncTaskQueue.addTask<boolean>(async () => {
       const targetVertexExists = await this.storageFile.searchLine(
         vertex => vertex.id === targetVertexId,
       );
       if (!targetVertexExists)
         throw new Error(`Cannot find targetVertexId: ${targetVertexId}`);
-
-      const updateResult = await this.storageFile.updateLine(vertex => {
-        if (vertex.id === sourceVertexId) {
-          if (vertex.arcs.includes(targetVertexId)) {
-            throw new Error(
-              `targetVertexId: ${targetVertexId} already exists in vertex ${sourceVertexId}`,
-            );
-          }
-          return { arcs: [...vertex.arcs, targetVertexId] };
-        }
-      });
-
+      const updateResult = await this.storageFile.updateLine(updater);
       return updateResult;
     });
   }

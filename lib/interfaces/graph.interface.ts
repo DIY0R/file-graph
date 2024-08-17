@@ -64,4 +64,21 @@ export abstract class FileGraphAbstract {
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
   ): Promise<boolean>;
+
+  /**
+   * Removes an arc (edge) between two vertices in the graph.
+   *
+   * This method disconnects the vertex with the specified `sourceVertexId` from the vertex with the specified `targetVertexId`.
+   * If the target vertex does not exist or the arc does not exist, an error will be thrown.
+   *
+   * @param {uuidType} sourceVertexId - The ID of the vertex from which the arc is to be removed.
+   * @param {uuidType} targetVertexId - The ID of the vertex to which the arc points.
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the arc was successfully removed,
+   *                              or `false` if the arc does not exist.
+   * @throws {Error} Throws an error if the target vertex does not exist or if an error occurs during the update.
+   */
+  public abstract removeArc(
+    sourceVertexId: uuidType,
+    targetVertexId: uuidType,
+  ): Promise<boolean>;
 }

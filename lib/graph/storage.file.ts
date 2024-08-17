@@ -39,12 +39,12 @@ export class StorageFile {
       await fileStream(async line => {
         const vertex = this.deserializer(line) as IVertex<T>;
         const updaterVertex = updater(vertex);
+        if (updaterVertex === true) return void (updated = true);
         if (typeof updaterVertex === 'object' && updaterVertex !== null) {
           const newVertices = mergeVertices(vertex, updaterVertex);
           tempStream.write(this.serializer(newVertices) + '\n');
           return void (updated = true);
         }
-        if (updaterVertex === true) return void (updated = true);
         tempStream.write(line + '\n');
       });
 
@@ -73,13 +73,15 @@ export class StorageFile {
     });
 
     return async (read: (line: string) => Promise<any>) => {
-      for await (const line of rl) {
-        const result = await read(line);
-        if (result) return result;
+      try {
+        for await (const line of rl) {
+          const result = await read(line);
+          if (result) return result;
+        }
+      } finally {
+        rl.close();
+        fileStream.destroy();
       }
-      rl.close();
-      fileStream.destroy();
-
       return null;
     };
   }
