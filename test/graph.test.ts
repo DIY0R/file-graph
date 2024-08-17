@@ -7,7 +7,7 @@ const data = { name: 'Diy0r', age: new Date().toString() };
 let globId = '';
 
 describe('Vertex CRUD Operations', () => {
-  it('should create a vertex and find it by ID', async () => {
+  it('create a vertex and find it by ID', async () => {
     const createdVertexId = await graph.createVertex(data);
     const foundVertex = await graph.findOne<typeof data>(
       vertex => vertex.id === createdVertexId,
@@ -20,14 +20,14 @@ describe('Vertex CRUD Operations', () => {
     globId = createdVertexId;
   });
 
-  it('should update the vertex name', async () => {
+  it('update the vertex name', async () => {
     const isUpdated = await graph.updateVertex<typeof data>(vertex =>
       vertex.id === globId ? { data: { name: 'Dupo' } } : null,
     );
     assert.strictEqual(isUpdated, true);
   });
 
-  it('should verify the updated vertex name', async () => {
+  it('verify the updated vertex name', async () => {
     const foundVertex = await graph.findOne<typeof data>(
       vertex => vertex.id === globId,
     );
@@ -35,7 +35,7 @@ describe('Vertex CRUD Operations', () => {
     assert.strictEqual(foundVertex?.data.name, 'Dupo');
   });
 
-  it('should create a vertex and delete it', async () => {
+  it('create a vertex and delete it', async () => {
     const createdVertexId = await graph.createVertex(data);
     const deleteVertex = await graph.deleteVertex<typeof data>(
       vertex => vertex.id === createdVertexId,
@@ -46,22 +46,39 @@ describe('Vertex CRUD Operations', () => {
 });
 
 describe('Arc operations', () => {
-  it('should create an arc between two vertices', async () => {
-    const createdVertexId = await graph.createVertex(data);
+  let createdVertexId: uuidType;
 
-    const newArcCreated = await graph.createArc(
-      globId as uuidType,
-      createdVertexId,
-    );
+  async function createVertexAndArc() {
+    createdVertexId = await graph.createVertex(data);
+    return graph.createArc(globId as uuidType, createdVertexId);
+  }
+
+  async function checkArcPresence(expected: boolean) {
     const foundVertex = await graph.findOne<typeof data>(
       vertex => vertex.id === globId,
     );
-
-    assert.equal(newArcCreated, true, 'Arc creation failed');
     assert.equal(
       foundVertex.arcs.includes(createdVertexId),
-      true,
-      'Arc not found in vertex',
+      expected,
+      `Arc ${expected ? 'not ' : ''}found in vertex`,
     );
+  }
+
+  it(' create an arc between two vertices', async () => {
+    const newArcCreated = await createVertexAndArc();
+
+    assert.equal(newArcCreated, true, 'Arc creation failed');
+    await checkArcPresence(true);
+  });
+
+  it(' remove an arc between two vertices', async () => {
+    await createVertexAndArc();
+    const removedArc = await graph.removeArc(
+      globId as uuidType,
+      createdVertexId,
+    );
+
+    assert.equal(removedArc, true, 'Arc removal failed');
+    await checkArcPresence(false);
   });
 });
