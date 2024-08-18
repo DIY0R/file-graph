@@ -19,7 +19,7 @@ export class StorageFile {
 
   public async searchLine<T extends object>(
     predicate: IPredicate<T>,
-  ): Promise<any> {
+  ): Promise<IVertex<T>> {
     const fileStream = this.createLineStream();
     const findVertex = await fileStream(async line => {
       const vertex = this.deserializer(line) as IVertex<T>;
