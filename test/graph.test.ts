@@ -64,14 +64,19 @@ describe('Arc operations', () => {
     );
   }
 
-  it(' create an arc between two vertices', async () => {
+  it('create an arc between two vertices', async () => {
     const newArcCreated = await createVertexAndArc();
 
     assert.equal(newArcCreated, true, 'Arc creation failed');
     await checkArcPresence(true);
   });
 
-  it(' remove an arc between two vertices', async () => {
+  it('checks the existence of an arc between two vertices', async () => {
+    const hasArc = await graph.hasArc(globId as uuidType, createdVertexId);
+    assert.equal(hasArc, true);
+  });
+
+  it('remove an arc between two vertices', async () => {
     await createVertexAndArc();
     const removedArc = await graph.removeArc(
       globId as uuidType,
