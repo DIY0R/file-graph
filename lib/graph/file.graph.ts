@@ -71,6 +71,19 @@ class FileGraphIml implements FileGraphAbstract {
     });
   }
 
+  public async hasArc(
+    sourceVertexId: uuidType,
+    targetVertexId: uuidType,
+  ): Promise<boolean> {
+    const targetVertexExists = await this.storageFile.searchLine(
+      v => v.id == sourceVertexId,
+    );
+    if (!targetVertexExists)
+      throw new Error(`Cannot find targetVertexId: ${targetVertexId}`);
+
+    return targetVertexExists.arcs.includes(targetVertexId);
+  }
+
   private updateArc(
     targetVertexId: uuidType,
     updater: IPredicate<object> | IUpdater<object>,
