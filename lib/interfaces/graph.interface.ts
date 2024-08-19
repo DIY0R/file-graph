@@ -81,4 +81,19 @@ export abstract class FileGraphAbstract {
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
   ): Promise<boolean>;
+
+  /**
+   * Checks whether an arc (directed edge) exists between two vertices in the graph.
+   *
+   * This method determines if there is a connection from the vertex with the specified `sourceVertexId`
+   * to the vertex with the specified `targetVertexId`.
+   *
+   * @param {uuidType} sourceVertexId - The ID of the vertex from which the arc originates.
+   * @param {uuidType} targetVertexId - The ID of the vertex to which the arc points.
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the arc exists, `false` otherwise.
+   */
+  public abstract hasArc(
+    sourceVertexId: uuidType,
+    targetVertexId: uuidType,
+  ): Promise<boolean>;
 }
