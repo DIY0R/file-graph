@@ -13,15 +13,13 @@ class FileGraphIml implements FileGraphAbstract {
     private readonly storageFile: StorageFile,
     private readonly asyncTaskQueue: AsyncTaskQueue,
   ) {}
-  public async createVertex<T extends object>(data: T): Promise<uuidType> {
-    const id = uuid();
-    await this.storageFile.appendFile<IVertex<T>>({
-      id,
-      data,
-      arcs: [],
-    });
-    return id;
+
+  public async createVertex<T extends object>(data: T): Promise<IVertex<T>> {
+    const vertex = this.vertexTemplate(data);
+    await this.storageFile.appendFile(vertex);
+    return vertex;
   }
+
   public findOne<T extends object>(
     predicate: IPredicate<T>,
   ): Promise<IVertex<T> | null> {
@@ -97,6 +95,10 @@ class FileGraphIml implements FileGraphAbstract {
       const updateResult = await this.storageFile.updateLine(updater);
       return updateResult;
     });
+  }
+
+  private vertexTemplate<T extends object>(data: T): IVertex<T> {
+    return { id: uuid(), data, arcs: [] };
   }
 }
 

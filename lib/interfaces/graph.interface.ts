@@ -5,9 +5,9 @@ export abstract class FileGraphAbstract {
    * Creates a node in the graph.
    * @template T The date type from the node, which must match the type of the object.
    * @param {T} data - The data vertex for creating the node.
-   * @returns {crypto.UUID} - The unique identifier of the created node.
+   * @returns {IVertex<T>} - created node.
    */
-  public abstract createVertex<T extends object>(data: T): Promise<uuidType>;
+  public abstract createVertex<T extends object>(data: T): Promise<IVertex<T>>;
 
   /**
    * Searches for a vertex in the storage file that matches the given predicate.
