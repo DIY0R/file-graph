@@ -8,16 +8,16 @@ let globId = '';
 
 describe('Vertex CRUD Operations', () => {
   it('create a vertex and find it by ID', async () => {
-    const createdVertexId = await graph.createVertex(data);
+    const createdVertex = await graph.createVertex(data);
     const foundVertex = await graph.findOne<typeof data>(
-      vertex => vertex.id === createdVertexId,
+      vertex => vertex.id === createdVertex.id,
     );
 
     assert.deepStrictEqual(
-      { id: createdVertexId, data, arcs: [] },
+      { id: createdVertex.id, data, arcs: [] },
       foundVertex,
     );
-    globId = createdVertexId;
+    globId = createdVertex.id;
   });
 
   it('update the vertex name', async () => {
@@ -36,9 +36,9 @@ describe('Vertex CRUD Operations', () => {
   });
 
   it('create a vertex and delete it', async () => {
-    const createdVertexId = await graph.createVertex(data);
+    const createdVertex = await graph.createVertex(data);
     const deleteVertex = await graph.deleteVertex<typeof data>(
-      vertex => vertex.id === createdVertexId,
+      vertex => vertex.id === createdVertex.id,
     );
 
     assert.equal(deleteVertex, true);
@@ -49,7 +49,7 @@ describe('Arc operations', () => {
   let createdVertexId: uuidType;
 
   async function createVertexAndArc() {
-    createdVertexId = await graph.createVertex(data);
+    createdVertexId = (await graph.createVertex(data)).id;
     return graph.createArc(globId as uuidType, createdVertexId);
   }
 
