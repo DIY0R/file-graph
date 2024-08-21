@@ -20,6 +20,15 @@ describe('Vertex CRUD Operations', () => {
     globId = createdVertex.id;
   });
 
+  it('creates multiple vertices', async () => {
+    const vertices = [{ name: 'Alex' }, { city: 'LA' }];
+    const createdVertices = await graph.createVertices(vertices);
+    assert.strictEqual(createdVertices.length, vertices.length);
+    createdVertices.forEach((vertex, index) =>
+      assert.deepEqual(vertex.data, vertices[index]),
+    );
+  });
+
   it('update the vertex name', async () => {
     const isUpdated = await graph.updateVertex<typeof data>(vertex =>
       vertex.id === globId ? { data: { name: 'Dupo' } } : null,
