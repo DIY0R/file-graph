@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "ESNext",
         "declaration": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
@@ -9,6 +9,7 @@
         "sourceMap": true,
         "outDir": "./dist",
         "baseUrl": "./",
+        "moduleResolution": "Node",
         "skipLibCheck": true,
         "strictNullChecks": false,
         "noImplicitAny": false,
