@@ -20,6 +20,14 @@ class FileGraphIml implements FileGraphAbstract {
     return vertex;
   }
 
+  public async createVertices<T extends object>(
+    data: T[],
+  ): Promise<IVertex<T>[]> {
+    const vertices = data.map(this.vertexTemplate);
+    await this.storageFile.appendFile(vertices);
+    return vertices;
+  }
+
   public findOne<T extends object>(
     predicate: IPredicate<T>,
   ): Promise<IVertex<T> | null> {

@@ -10,6 +10,18 @@ export abstract class FileGraphAbstract {
   public abstract createVertex<T extends object>(data: T): Promise<IVertex<T>>;
 
   /**
+   * Creates multiple vertices in the graph.
+   *
+   * This method takes an array of vertices and creates them in the graph.
+   *
+   * @param {T[]} data - An array of data to be created.
+   * @returns {Promise<uuidType[]>} A promise that resolves to an array of unique identifiers of the created vertices.
+   */
+  public abstract createVertices<T extends object>(
+    data: T[],
+  ): Promise<IVertex<T>[]>;
+
+  /**
    * Searches for a vertex in the storage file that matches the given predicate.
    * @template T The date type from the node, which must match the type of the object.
    * @param {function(T): boolean} predicate - A function that takes a vertex as input and returns `true` if the vertex matches the search criteria, otherwise `false`.

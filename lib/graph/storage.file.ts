@@ -11,10 +11,12 @@ import { IPredicate, IUpdater, IVertex } from '../interfaces';
 export class StorageFile {
   constructor(private readonly path: string) {}
 
-  public async appendFile<T extends object>(vertex: T): Promise<T> {
-    const vertexSer = this.serializer(vertex);
-    await appendFile(this.path, vertexSer + '\n');
-    return vertex;
+  public async appendFile<T extends object>(vertex: T): Promise<void> {
+    const vertexSer = Array.isArray(vertex)
+      ? vertex.map(this.serializer).join('\n') + '\n'
+      : this.serializer(vertex) + '\n';
+
+    return appendFile(this.path, vertexSer);
   }
 
   public async searchLine<T extends object>(
