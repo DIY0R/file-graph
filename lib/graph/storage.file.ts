@@ -4,6 +4,7 @@ import {
   promises as fsPromises,
 } from 'fs';
 import { appendFile } from 'fs/promises';
+import { finished } from 'stream/promises';
 import readline from 'readline';
 import { mergeVertices, uuid } from '../utils';
 import { IPredicate, IUpdater, IVertex } from '../interfaces';
@@ -49,24 +50,21 @@ export class StorageFile {
         }
         tempStream.write(line + '\n');
       });
-
-      tempStream.end();
-      await new Promise<void>((resolve, reject) => {
-        tempStream.on('finish', () => {
-          fsPromises.rename(tempPath, this.path).then(resolve).catch(reject);
-        });
-        tempStream.on('error', reject);
-      });
     } catch (error) {
       await fsPromises.unlink(tempPath);
       throw error;
     } finally {
       tempStream.end();
     }
-
+    await finished(tempStream);
+    await fsPromises.rename(tempPath, this.path);
     return updated;
   }
+  private async handleStream(tempStream, tempPath, destinationPath) {
+    await finished(tempStream);
 
+    await fsPromises.rename(tempPath, destinationPath);
+  }
   private createLineStream() {
     const fileStream = createReadStream(this.path, 'utf8');
     const rl = readline.createInterface({
