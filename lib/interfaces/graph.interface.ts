@@ -22,15 +22,6 @@ export abstract class FileGraphAbstract {
   ): Promise<IVertex<T>[]>;
 
   /**
-   * Searches for a vertex in the storage file that matches the given predicate.
-   * @template T The date type from the node, which must match the type of the object.
-   * @param {function(T): boolean} predicate - A function that takes a vertex as input and returns `true` if the vertex matches the search criteria, otherwise `false`.
-   * @returns {Promise<T | null>} A promise that resolves to the found vertex if a match is found, or `null` if no match is found.
-   */
-  public abstract findOne<T extends object>(
-    predicate: IPredicate<T>,
-  ): Promise<IVertex<T> | null>;
-  /**
    * Updates a vertex record in the storage that matches the given condition.
    *
    * This method searches for a record that satisfies the condition specified by the `updater` function
@@ -59,6 +50,16 @@ export abstract class FileGraphAbstract {
   public abstract deleteVertex<T extends object>(
     predicate: IPredicate<T>,
   ): Promise<boolean>;
+
+  /**
+   * Searches for a vertex in the storage file that matches the given predicate.
+   * @template T The date type from the node, which must match the type of the object.
+   * @param {function(T): boolean} predicate - A function that takes a vertex as input and returns `true` if the vertex matches the search criteria, otherwise `false`.
+   * @returns {Promise<T | null>} A promise that resolves to the found vertex if a match is found, or `null` if no match is found.
+   */
+  public abstract findOne<T extends object>(
+    predicate: IPredicate<T>,
+  ): Promise<IVertex<T> | null>;
 
   /**
    * Creates an arc (edge) from one vertex to another in the graph.

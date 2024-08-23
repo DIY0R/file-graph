@@ -28,11 +28,6 @@ class FileGraphIml implements FileGraphAbstract {
     return vertices;
   }
 
-  public findOne<T extends object>(
-    predicate: IPredicate<T>,
-  ): Promise<IVertex<T> | null> {
-    return this.storageFile.searchLine(predicate);
-  }
   public updateVertex<T extends object>(
     updater: IUpdater<T>,
   ): Promise<boolean> {
@@ -40,6 +35,7 @@ class FileGraphIml implements FileGraphAbstract {
       this.storageFile.updateLine(updater),
     );
   }
+
   public deleteVertex<T extends object>(
     predicate: IPredicate<T>,
   ): Promise<boolean> {
@@ -47,6 +43,13 @@ class FileGraphIml implements FileGraphAbstract {
       this.storageFile.updateLine(predicate),
     );
   }
+
+  public findOne<T extends object>(
+    predicate: IPredicate<T>,
+  ): Promise<IVertex<T> | null> {
+    return this.storageFile.searchLine(predicate);
+  }
+
   public createArc(
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
@@ -85,7 +88,7 @@ class FileGraphIml implements FileGraphAbstract {
       v => v.id == sourceVertexId,
     );
     if (!targetVertexExists)
-      throw new Error(`Cannot find targetVertexId: ${targetVertexId}`);
+      throw new Error(`Target vertex with ID "${targetVertexId}" not found`);
 
     return targetVertexExists.arcs.includes(targetVertexId);
   }
@@ -99,7 +102,7 @@ class FileGraphIml implements FileGraphAbstract {
         vertex => vertex.id === targetVertexId,
       );
       if (!targetVertexExists)
-        throw new Error(`Cannot find targetVertexId: ${targetVertexId}`);
+        throw new Error(`Target vertex with ID "${targetVertexId}" not found`);
       const updateResult = await this.storageFile.updateLine(updater);
       return updateResult;
     });
