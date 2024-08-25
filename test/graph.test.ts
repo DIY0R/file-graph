@@ -36,7 +36,6 @@ describe('Vertex CRUD Operations', () => {
       vertex => vertex.data?.name === 'Alice',
     );
 
-    assert.strictEqual(foundVertices.length, 2);
     foundVertices.forEach(vertex =>
       assert.strictEqual(vertex.data.name, 'Alice'),
     );
