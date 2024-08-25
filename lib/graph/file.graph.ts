@@ -1,5 +1,6 @@
 import {
   FileGraphAbstract,
+  IFindVertex,
   IPredicate,
   IUpdater,
   IVertex,
@@ -44,10 +45,21 @@ class FileGraphIml implements FileGraphAbstract {
     );
   }
 
-  public findOne<T extends object>(
+  public async findOne<T extends object>(
     predicate: IPredicate<T>,
   ): Promise<IVertex<T> | null> {
     return this.storageFile.searchLine(predicate);
+  }
+
+  public async findAll<T extends object>(
+    predicate: IPredicate<T>,
+  ): Promise<IVertex<T>[]> {
+    const vertices = [];
+    const findVertex: IFindVertex<T> = vertex => {
+      if (predicate(vertex)) vertices.push(vertex);
+    };
+    await this.storageFile.searchLine(findVertex);
+    return vertices;
   }
 
   public createArc(
@@ -84,8 +96,8 @@ class FileGraphIml implements FileGraphAbstract {
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
   ): Promise<boolean> {
-    const targetVertexExists = await this.storageFile.searchLine(
-      v => v.id == sourceVertexId,
+    const targetVertexExists = await this.findOne(
+      vertex => vertex.id === sourceVertexId,
     );
     if (!targetVertexExists)
       throw new Error(`Target vertex with ID "${targetVertexId}" not found`);
@@ -98,7 +110,7 @@ class FileGraphIml implements FileGraphAbstract {
     updater: IPredicate<object> | IUpdater<object>,
   ): Promise<boolean> {
     return this.asyncTaskQueue.addTask<boolean>(async () => {
-      const targetVertexExists = await this.storageFile.searchLine(
+      const targetVertexExists = await this.findOne(
         vertex => vertex.id === targetVertexId,
       );
       if (!targetVertexExists)

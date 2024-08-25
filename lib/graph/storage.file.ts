@@ -7,7 +7,7 @@ import { appendFile } from 'fs/promises';
 import { finished } from 'stream/promises';
 import readline from 'readline';
 import { mergeVertices, uuid } from '../utils';
-import { IPredicate, IUpdater, IVertex } from '../interfaces';
+import { IFindVertex, IPredicate, IUpdater, IVertex } from '../interfaces';
 
 export class StorageFile {
   constructor(private readonly path: string) {}
@@ -21,14 +21,13 @@ export class StorageFile {
   }
 
   public async searchLine<T extends object>(
-    predicate: IPredicate<T>,
+    predicate: IFindVertex<T> | IPredicate<T>,
   ): Promise<IVertex<T>> {
-    const fileStream = this.createLineStream();
-    const findVertex = await fileStream(async line => {
+    const fileStream = this.createLineStream(true);
+    return await fileStream(async line => {
       const vertex = this.deserializer(line) as IVertex<T>;
       if (predicate(vertex)) return vertex;
     });
-    return findVertex;
   }
 
   public async updateLine<T extends object>(
@@ -36,17 +35,17 @@ export class StorageFile {
   ): Promise<boolean> {
     const tempPath = `${this.path}.${uuid()}.tmp`;
     let updated = false;
-    const fileStream = this.createLineStream();
+    const fileStream = this.createLineStream(false);
     const tempStream = createWriteStream(tempPath, { encoding: 'utf8' });
     try {
       await fileStream(async line => {
         const vertex = this.deserializer(line) as IVertex<T>;
         const updaterVertex = updater(vertex);
-        if (updaterVertex === true) return void (updated = true);
+        if (updaterVertex === true) return (updated = true);
         if (typeof updaterVertex === 'object' && updaterVertex !== null) {
           const newVertices = mergeVertices(vertex, updaterVertex);
           tempStream.write(this.serializer(newVertices) + '\n');
-          return void (updated = true);
+          return (updated = true);
         }
         tempStream.write(line + '\n');
       });
@@ -60,12 +59,7 @@ export class StorageFile {
     await fsPromises.rename(tempPath, this.path);
     return updated;
   }
-  private async handleStream(tempStream, tempPath, destinationPath) {
-    await finished(tempStream);
-
-    await fsPromises.rename(tempPath, destinationPath);
-  }
-  private createLineStream() {
+  private createLineStream(canAbort: boolean) {
     const fileStream = createReadStream(this.path, 'utf8');
     const rl = readline.createInterface({
       input: fileStream,
@@ -76,7 +70,7 @@ export class StorageFile {
       try {
         for await (const line of rl) {
           const result = await read(line);
-          if (result) return result;
+          if (canAbort && result) return result;
         }
       } finally {
         rl.close();
