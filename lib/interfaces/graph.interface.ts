@@ -62,6 +62,19 @@ export abstract class FileGraphAbstract {
   ): Promise<IVertex<T> | null>;
 
   /**
+   * Searches for vertices in the storage file that match the given predicate.
+   *
+   * This method retrieves all vertices that satisfy the condition specified by the `predicate` function.
+   *
+   * @template T The data type of the vertex, which must match the type of the object.
+   * @param {function(T): boolean} predicate - A function that takes a vertex as input and returns `true` if the vertex matches the search criteria, otherwise `false`.
+   * @returns {Promise<T[]>} A promise that resolves to an array of vertices that match the search criteria.
+   */
+  public abstract findAll<T extends object>(
+    predicate: IPredicate<T>,
+  ): Promise<IVertex<T>[]>;
+
+  /**
    * Creates an arc (edge) from one vertex to another in the graph.
    *
    * This method connects the vertex with the specified `sourceVertexId` to the vertex with the specified `targetVertexId`.

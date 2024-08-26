@@ -6,8 +6,10 @@ export interface IVertex<T extends object> {
   arcs: Array<uuidType>;
   data: T;
 }
-
 export type IPredicate<T extends object> = (vertex: IVertex<T>) => boolean;
 export type IUpdater<T extends object> = (
   vertex: IVertex<T>,
 ) => IVertex<T> | object;
+export type IFindVertex<T extends object> = (
+  vertex: IVertex<T>,
+) => IVertex<T> | void;
