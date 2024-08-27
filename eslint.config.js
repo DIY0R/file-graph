@@ -40,12 +40,11 @@ export default tseslint.config(
     rules: {
       ...prettierPlugin.configs.recommended.rules,
       ...eslintConfigPrettier.rules,
-      'max-lines': ['warn', { max: 124 }],
+      'max-lines': 'off',
       'max-params': ['error', 3],
       'no-unused-vars': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'off',
-      skipBlankLines: 'off',
       'prettier/prettier': [
         'error',
         {
