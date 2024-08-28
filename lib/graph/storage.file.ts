@@ -7,7 +7,13 @@ import { appendFile } from 'fs/promises';
 import { finished } from 'stream/promises';
 import readline from 'readline';
 import { mergeVertices, uuid } from '../utils';
-import { IFindVertex, IPredicate, IUpdater, IVertex } from '../interfaces';
+import {
+  IFindVertex,
+  ILineReturn,
+  IPredicate,
+  IUpdater,
+  IVertex,
+} from '../interfaces';
 
 export class StorageFile {
   constructor(private readonly path: string) {}
@@ -66,7 +72,7 @@ export class StorageFile {
       crlfDelay: Infinity,
     });
 
-    return async (read: (line: string) => Promise<any>) => {
+    return async (read: ILineReturn) => {
       try {
         for await (const line of rl) {
           const result = await read(line);

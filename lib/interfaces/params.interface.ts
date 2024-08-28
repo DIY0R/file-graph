@@ -13,3 +13,4 @@ export type IUpdater<T extends object> = (
 export type IFindVertex<T extends object> = (
   vertex: IVertex<T>,
 ) => IVertex<T> | void;
+export type ILineReturn = (line: string) => Promise<any>;
