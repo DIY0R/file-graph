@@ -62,14 +62,31 @@ class FileGraphIml implements FileGraphAbstract {
     return vertices;
   }
 
+  public async createEdge(ids: uuidType[]): Promise<boolean> {
+    const updater = (vertex: IVertex<object>) => {
+      const index = ids.indexOf(vertex.id);
+      if (index === -1) return;
+      const neighbors = [ids[index - 1], ids[index + 1]].filter(
+        neighbor => neighbor !== undefined,
+      );
+      const links = vertex.links;
+      neighbors.forEach(neighbor => {
+        if (!links.includes(neighbor)) links.push(neighbor);
+      });
+      return { links };
+    };
+    const updateResult = await this.storageFile.updateLine(updater);
+    return updateResult;
+  }
+
   public createArc(
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
   ): Promise<boolean> {
     return this.updateArc(targetVertexId, vertex => {
       if (vertex.id !== sourceVertexId) return;
-      if (!vertex.arcs.includes(targetVertexId))
-        return { arcs: [...vertex.arcs, targetVertexId] };
+      if (!vertex.links.includes(targetVertexId))
+        return { links: [...vertex.links, targetVertexId] };
 
       throw new Error(
         `targetVertexId: ${targetVertexId} already exists in vertex ${sourceVertexId}`,
@@ -83,8 +100,8 @@ class FileGraphIml implements FileGraphAbstract {
   ): Promise<boolean> {
     return this.updateArc(targetVertexId, vertex => {
       if (vertex.id !== sourceVertexId) return;
-      if (vertex.arcs.includes(targetVertexId))
-        return { arcs: vertex.arcs.filter(v => v !== targetVertexId) };
+      if (vertex.links.includes(targetVertexId))
+        return { links: vertex.links.filter(v => v !== targetVertexId) };
 
       throw new Error(
         `targetVertexId: ${targetVertexId} don't exists in vertex ${sourceVertexId}`,
@@ -102,7 +119,7 @@ class FileGraphIml implements FileGraphAbstract {
     if (!targetVertexExists)
       throw new Error(`Target vertex with ID "${targetVertexId}" not found`);
 
-    return targetVertexExists.arcs.includes(targetVertexId);
+    return targetVertexExists.links.includes(targetVertexId);
   }
 
   private updateArc(
@@ -115,13 +132,14 @@ class FileGraphIml implements FileGraphAbstract {
       );
       if (!targetVertexExists)
         throw new Error(`Target vertex with ID "${targetVertexId}" not found`);
+
       const updateResult = await this.storageFile.updateLine(updater);
       return updateResult;
     });
   }
 
   private vertexTemplate<T extends object>(data: T): IVertex<T> {
-    return { id: uuid(), data, arcs: [] };
+    return { id: uuid(), data, links: [] };
   }
 }
 

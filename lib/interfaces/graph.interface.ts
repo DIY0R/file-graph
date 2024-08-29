@@ -75,6 +75,19 @@ export abstract class FileGraphAbstract {
   ): Promise<IVertex<T>[]>;
 
   /**
+   * Creates edges (links) between the specified vertices.
+   *
+   * This method establishes connections between vertices using the provided vertex IDs.
+   * Each vertex will be connected to the previous and next vertex in the given list of IDs.
+   * If the vertices are already connected, no duplicate connections will be created.
+   *
+   * @param {uuidType[]} ids - An array of vertex IDs between which to create edges. The vertices will be connected in the order they appear in the array.
+   *
+   * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the edge creation was successful.
+   */
+  public abstract createEdge(ids: uuidType[]): Promise<boolean>;
+
+  /**
    * Creates an arc (edge) from one vertex to another in the graph.
    *
    * This method connects the vertex with the specified `sourceVertexId` to the vertex with the specified `targetVertexId`.
