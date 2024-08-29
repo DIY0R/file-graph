@@ -14,7 +14,7 @@ describe('Vertex CRUD Operations', () => {
     );
 
     assert.deepStrictEqual(
-      { id: createdVertex.id, data, arcs: [] },
+      { id: createdVertex.id, data, links: [] },
       foundVertex,
     );
     globId = createdVertex.id;
@@ -66,7 +66,7 @@ describe('Vertex CRUD Operations', () => {
   });
 });
 
-describe('Arc operations', () => {
+describe('Links operations', () => {
   let createdVertexId: uuidType;
 
   async function createVertexAndArc() {
@@ -74,12 +74,14 @@ describe('Arc operations', () => {
     return graph.createArc(globId, createdVertexId);
   }
 
-  async function checkArcPresence(expected: boolean) {
-    const foundVertex = await graph.findOne<typeof data>(
-      vertex => vertex.id === globId,
-    );
+  async function checkLinksPresence(
+    vertexId: uuidType,
+    arcId: uuidType,
+    expected: boolean,
+  ) {
+    const foundVertex = await graph.findOne(vertex => vertex.id === vertexId);
     assert.equal(
-      foundVertex.arcs.includes(createdVertexId),
+      foundVertex.links.includes(arcId),
       expected,
       `Arc ${expected ? 'not ' : ''}found in vertex`,
     );
@@ -89,7 +91,7 @@ describe('Arc operations', () => {
     const newArcCreated = await createVertexAndArc();
 
     assert.equal(newArcCreated, true, 'Arc creation failed');
-    await checkArcPresence(true);
+    await checkLinksPresence(globId, createdVertexId, true);
   });
 
   it('checks the existence of an arc between two vertices', async () => {
@@ -102,6 +104,24 @@ describe('Arc operations', () => {
     const removedArc = await graph.removeArc(globId, createdVertexId);
 
     assert.equal(removedArc, true, 'Arc removal failed');
-    await checkArcPresence(false);
+    await checkLinksPresence(globId, createdVertexId, false);
+  });
+
+  it('create edges between multiple vertices', async () => {
+    const ids = await Promise.all([
+      graph.createVertex({ name: 'Vertex 1' }),
+      graph.createVertex({ name: 'Vertex 2' }),
+      graph.createVertex({ name: 'Vertex 3' }),
+      graph.createVertex({ name: 'Vertex 4' }),
+      graph.createVertex({ name: 'Vertex 5' }),
+    ]).then(results => results.map(result => result.id));
+
+    const edgeCreated = await graph.createEdge(ids);
+    assert.equal(edgeCreated, true, 'Edge creation failed');
+
+    for (let i = 0; i < ids.length - 1; i++) {
+      await checkLinksPresence(ids[i], ids[i + 1], true);
+      await checkLinksPresence(ids[i + 1], ids[i], true);
+    }
   });
 });
