@@ -108,13 +108,13 @@ describe('Links operations', () => {
   });
 
   it('create edges between multiple vertices', async () => {
-    const ids = await Promise.all([
-      graph.createVertex({ name: 'Vertex 1' }),
-      graph.createVertex({ name: 'Vertex 2' }),
-      graph.createVertex({ name: 'Vertex 3' }),
-      graph.createVertex({ name: 'Vertex 4' }),
-      graph.createVertex({ name: 'Vertex 5' }),
-    ]).then(results => results.map(result => result.id));
+    const createVertices = await graph.createVertices([
+      { name: 'Vertex 1' },
+      { name: 'Vertex 2' },
+      { name: 'Vertex 3' },
+    ]);
+
+    const ids = createVertices.map(result => result.id);
 
     const edgeCreated = await graph.createEdge(ids);
     assert.equal(edgeCreated, true, 'Edge creation failed');
