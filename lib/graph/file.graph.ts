@@ -4,6 +4,7 @@ import {
   IPredicate,
   IUpdater,
   IVertex,
+  IVertexTree,
   uuidType,
 } from '../interfaces';
 import { StorageFile } from './storage.file';
@@ -120,6 +121,44 @@ class FileGraphIml implements FileGraphAbstract {
       throw new Error(`Target vertex with ID "${targetVertexId}" not found`);
 
     return targetVertexExists.links.includes(targetVertexId);
+  }
+
+  public async findUpToLevel<T extends object>(
+    vertexId: uuidType,
+    maxLevel: number,
+  ): Promise<IVertexTree<T>[]> {
+    if (maxLevel < 0) throw new Error('Level must be a non-negative integer.');
+    const startingVertex = await this.findOne<T>(
+      vertex => vertex.id === vertexId,
+    );
+
+    if (!startingVertex)
+      throw new Error(`Vertex with id ${vertexId} not found.`);
+
+    const resultVertices: IVertexTree<T>[] = [];
+    const queue = [{ vertex: startingVertex, currentLevel: 0 }];
+
+    while (queue.length > 0) {
+      const { vertex, currentLevel } = queue.shift()!;
+      const vertexLinks = vertex.links;
+      const nextLevel = currentLevel + 1;
+
+      if (currentLevel > maxLevel) break;
+      resultVertices.push({ ...vertex, level: currentLevel });
+
+      if (!vertexLinks.length) continue;
+      await this.storageFile.searchLine<T>(currentVertex => {
+        const isNewArc =
+          vertexLinks.includes(currentVertex.id) &&
+          !resultVertices.some(
+            addedVertex => addedVertex.id === currentVertex.id,
+          );
+        if (isNewArc)
+          queue.push({ vertex: currentVertex, currentLevel: nextLevel });
+      });
+    }
+
+    return resultVertices;
   }
 
   private updateArc(

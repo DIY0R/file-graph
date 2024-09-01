@@ -135,4 +135,16 @@ export abstract class FileGraphAbstract {
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
   ): Promise<boolean>;
+
+  /**
+   * Retrieves vertices in the graph from the given starting vertex up to the specified level.
+   *
+   * @param {uuidType} vertexId - The identifier of the starting vertex.
+   * @param {number} maxLevel - The depth level for the search.
+   * @returns {Promise<IVertex<T>[]>} An array of vertices at the specified level.
+   */
+  public abstract findUpToLevel<T extends object>(
+    vertexId: uuidType,
+    maxLevel: number,
+  ): Promise<IVertex<T>[]>;
 }
