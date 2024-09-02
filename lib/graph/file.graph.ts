@@ -3,6 +3,7 @@ import {
   IFindVertex,
   IPredicate,
   IUpdater,
+  IUuidArray,
   IVertex,
   IVertexTree,
   uuidType,
@@ -63,7 +64,7 @@ class FileGraphIml implements FileGraphAbstract {
     return vertices;
   }
 
-  public async createEdge(ids: uuidType[]): Promise<boolean> {
+  public async createEdge(ids: IUuidArray): Promise<boolean> {
     const updater = (vertex: IVertex<object>) => {
       const index = ids.indexOf(vertex.id);
       if (index === -1) return;
@@ -76,6 +77,22 @@ class FileGraphIml implements FileGraphAbstract {
       });
       return { links };
     };
+    const updateResult = await this.storageFile.updateLine(updater);
+    return updateResult;
+  }
+
+  public async createArcs(ids: IUuidArray): Promise<boolean> {
+    const updater = (vertex: IVertex<object>) => {
+      const index = ids.indexOf(vertex.id);
+      if (index === -1) return;
+
+      const nextVertexId = ids[index + 1];
+
+      if (nextVertexId && !vertex.links.includes(nextVertexId)) {
+        return { links: [...vertex.links, nextVertexId] };
+      }
+    };
+
     const updateResult = await this.storageFile.updateLine(updater);
     return updateResult;
   }
