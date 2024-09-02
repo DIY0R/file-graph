@@ -72,9 +72,9 @@ class FileGraphIml implements FileGraphAbstract {
         neighbor => neighbor !== undefined,
       );
       const links = vertex.links;
-      neighbors.forEach(neighbor => {
-        if (!links.includes(neighbor)) links.push(neighbor);
-      });
+      neighbors.forEach(
+        neighbor => !links.includes(neighbor) && links.push(neighbor),
+      );
       return { links };
     };
     const updateResult = await this.storageFile.updateLine(updater);
@@ -85,12 +85,9 @@ class FileGraphIml implements FileGraphAbstract {
     const updater = (vertex: IVertex<object>) => {
       const index = ids.indexOf(vertex.id);
       if (index === -1) return;
-
       const nextVertexId = ids[index + 1];
-
-      if (nextVertexId && !vertex.links.includes(nextVertexId)) {
+      if (nextVertexId && !vertex.links.includes(nextVertexId))
         return { links: [...vertex.links, nextVertexId] };
-      }
     };
 
     const updateResult = await this.storageFile.updateLine(updater);
@@ -164,14 +161,11 @@ class FileGraphIml implements FileGraphAbstract {
       resultVertices.push({ ...vertex, level: currentLevel });
 
       if (!vertexLinks.length) continue;
-      await this.storageFile.searchLine<T>(currentVertex => {
+      await this.storageFile.searchLine<T>(vertex => {
         const isNewArc =
-          vertexLinks.includes(currentVertex.id) &&
-          !resultVertices.some(
-            addedVertex => addedVertex.id === currentVertex.id,
-          );
-        if (isNewArc)
-          queue.push({ vertex: currentVertex, currentLevel: nextLevel });
+          vertexLinks.includes(vertex.id) &&
+          !resultVertices.some(addedVertex => addedVertex.id === vertex.id);
+        if (isNewArc) queue.push({ vertex, currentLevel: nextLevel });
       });
     }
 
