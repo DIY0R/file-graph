@@ -124,4 +124,42 @@ describe('Links operations', () => {
       await checkLinksPresence(ids[i + 1], ids[i], true);
     }
   });
+  it('retrieve all vertices up to the specified depth level in a graph', async () => {
+    const createVertices = await graph.createVertices([
+      { name: 'Vertex 1' },
+      { name: 'Vertex 2' },
+      { name: 'Vertex 3' },
+    ]);
+    const ids = createVertices.map(result => result.id);
+    await graph.createEdge(ids);
+    const graphTree = await graph.findUpToLevel(createVertices[0].id, 2);
+    assert.equal(graphTree.length, 3);
+    graphTree.forEach((vertex, index) => {
+      assert.equal(vertex.level, index);
+      assert.equal(vertex.id, ids[index]);
+    });
+  });
+  it('error for negative level', async () => {
+    try {
+      await graph.findUpToLevel('A' as uuidType, -1);
+      assert.fail('Expected error not thrown');
+    } catch (error) {
+      assert.strictEqual(
+        error.message,
+        'Level must be a non-negative integer.',
+      );
+    }
+  });
+
+  it('error if start vertex does not exist', async () => {
+    try {
+      await graph.findUpToLevel('NonExistentVertex' as uuidType, 1);
+      assert.fail('Expected error not thrown');
+    } catch (error) {
+      assert.strictEqual(
+        error.message,
+        'Vertex with id NonExistentVertex not found.',
+      );
+    }
+  });
 });
