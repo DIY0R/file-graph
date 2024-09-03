@@ -1,10 +1,14 @@
 import assert from 'node:assert';
-import { describe, it } from 'node:test';
+import { before, describe, it } from 'node:test';
 import { FileGraph, IUuidArray, uuidType } from 'lib';
+import { writeFileSync } from 'node:fs';
 
-const graph = FileGraph('data.txt');
+const pathGraph = 'data.txt';
+const graph = FileGraph(pathGraph);
 const data = { name: 'Diy0r', age: new Date().toString() };
 let globId = '' as uuidType;
+
+before(() => writeFileSync(pathGraph, ''));
 
 describe('Vertex CRUD Operations', () => {
   it('create a vertex and find it by ID', async () => {
@@ -43,7 +47,7 @@ describe('Vertex CRUD Operations', () => {
 
   it('update the vertex name', async () => {
     const isUpdated = await graph.updateVertex<typeof data>(
-      vertex => vertex.id === globId && { data: { name: 'Dupo' } },
+      vertex => vertex.id === globId && { data: { name: 'Dupe' } },
     );
     assert.strictEqual(isUpdated, true);
   });
@@ -53,7 +57,7 @@ describe('Vertex CRUD Operations', () => {
       vertex => vertex.id === globId,
     );
 
-    assert.strictEqual(foundVertex?.data.name, 'Dupo');
+    assert.strictEqual(foundVertex?.data.name, 'Dupe');
   });
 
   it('create a vertex and delete it', async () => {
