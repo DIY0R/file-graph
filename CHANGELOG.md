@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [0.9.1](https://github.com/DIY0R/file-graph/compare/0.9.0...0.9.1)
+
+- fix: add type to createArcs [`935e47e`](https://github.com/DIY0R/file-graph/commit/935e47ef91859c727999629d4d18092dd67cb307)
+- refactor: remove tmp file before run tests [`a14d1a4`](https://github.com/DIY0R/file-graph/commit/a14d1a46266e302e299b4f2c76566949073570be)
+
 #### [0.9.0](https://github.com/DIY0R/file-graph/compare/0.8.0...0.9.0)
 
 > 3 September 2024
