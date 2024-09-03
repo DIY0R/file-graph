@@ -1,4 +1,10 @@
-import { IPredicate, IUpdater, IVertex, uuidType } from './params.interface';
+import {
+  IPredicate,
+  IUpdater,
+  IUuidArray,
+  IVertex,
+  uuidType,
+} from './params.interface';
 
 export abstract class FileGraphAbstract {
   /**
@@ -81,11 +87,11 @@ export abstract class FileGraphAbstract {
    * Each vertex will be connected to the previous and next vertex in the given list of IDs.
    * If the vertices are already connected, no duplicate connections will be created.
    *
-   * @param {uuidType[]} ids - An array of vertex IDs between which to create edges. The vertices will be connected in the order they appear in the array.
+   * @param {IUuidArray[]} ids - An array of vertex IDs between which to create edges. The vertices will be connected in the order they appear in the array.
    *
    * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the edge creation was successful.
    */
-  public abstract createEdge(ids: uuidType[]): Promise<boolean>;
+  public abstract createEdge(ids: IUuidArray): Promise<boolean>;
 
   /**
    * Creates an arc (edge) from one vertex to another in the graph.
@@ -103,6 +109,20 @@ export abstract class FileGraphAbstract {
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
   ): Promise<boolean>;
+
+  /**
+   * Creates directed arcs between vertices in the order specified by their IDs.
+   *
+   * This method takes an array of vertex IDs and creates directed arcs (links) from each vertex
+   * to the next vertex in the provided array. If an arc already exists between two vertices,
+   * it will not be duplicated.
+   *
+   * @param {IUuidArray} ids - An array of vertex IDs representing the order of vertices
+   *                           for which arcs (directed edges) should be created.
+   * @returns {Promise<boolean>} - A promise that resolves to a boolean indicating whether
+   *                               the update was successful.
+   */
+  public abstract createArcs(ids: IUuidArray): Promise<boolean>;
 
   /**
    * Removes an arc (edge) between two vertices in the graph.
