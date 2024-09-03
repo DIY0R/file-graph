@@ -1,5 +1,6 @@
 import {
   FileGraphAbstract,
+  ICallbackVertex,
   IFindVertex,
   IPredicate,
   IUpdater,
@@ -47,7 +48,7 @@ class FileGraphIml implements FileGraphAbstract {
     );
   }
 
-  public async findOne<T extends object>(
+  public findOne<T extends object>(
     predicate: IPredicate<T>,
   ): Promise<IVertex<T> | null> {
     return this.storageFile.searchLine(predicate);
@@ -62,6 +63,12 @@ class FileGraphIml implements FileGraphAbstract {
     };
     await this.storageFile.searchLine(findVertex);
     return vertices;
+  }
+
+  public async forEachVertex<T extends object>(
+    callbackVertex: ICallbackVertex<T>,
+  ): Promise<void> {
+    await this.storageFile.searchLine(callbackVertex);
   }
 
   public async createEdge(ids: IUuidArray): Promise<boolean> {

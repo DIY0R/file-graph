@@ -1,4 +1,5 @@
 import {
+  ICallbackVertex,
   IPredicate,
   IUpdater,
   IUuidArray,
@@ -79,6 +80,18 @@ export abstract class FileGraphAbstract {
   public abstract findAll<T extends object>(
     predicate: IPredicate<T>,
   ): Promise<IVertex<T>[]>;
+
+  /**
+   * Iterates over each vertex in the graph and applies the provided callback function.
+   *
+   * @template T - The type of the vertex object.
+   * @param {ICallbackVertex<T>} callbackVertex - A callback function that is invoked for each vertex.
+   * If it returns `true`, the iteration stops.
+   * @returns {Promise<void>} - A promise that resolves when the iteration is complete or has been stopped.
+   */
+  public abstract forEachVertex<T extends object>(
+    callbackVertex: ICallbackVertex<T>,
+  ): Promise<void>;
 
   /**
    * Creates edges (links) between the specified vertices.

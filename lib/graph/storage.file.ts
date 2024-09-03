@@ -8,6 +8,7 @@ import { finished } from 'stream/promises';
 import readline from 'readline';
 import { mergeVertices, uuid } from '../utils';
 import {
+  ICallbackVertex,
   IFindVertex,
   ILineReturn,
   IPredicate,
@@ -27,7 +28,7 @@ export class StorageFile {
   }
 
   public async searchLine<T extends object>(
-    predicate: IFindVertex<T> | IPredicate<T>,
+    predicate: IFindVertex<T> | IPredicate<T> | ICallbackVertex<T>,
   ): Promise<IVertex<T>> {
     const fileStream = this.createLineStream(true);
     return await fileStream(async line => {
