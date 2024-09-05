@@ -2,6 +2,7 @@ import assert from 'node:assert';
 import { before, describe, it } from 'node:test';
 import { FileGraph, IUuidArray, uuidType } from 'lib';
 import { writeFileSync } from 'node:fs';
+import { createError } from 'lib/utils';
 
 const pathGraph = 'data.txt';
 const graph = FileGraph(pathGraph);
@@ -163,10 +164,7 @@ describe('Links operations', () => {
       await graph.findUpToLevel('A' as uuidType, -1);
       assert.fail('Expected error not thrown');
     } catch (error) {
-      assert.strictEqual(
-        error.message,
-        'Level must be a non-negative integer.',
-      );
+      assert.strictEqual(error.message, createError('NEGATIVE_LEVEL').message);
     }
   });
 
@@ -177,7 +175,7 @@ describe('Links operations', () => {
     } catch (error) {
       assert.strictEqual(
         error.message,
-        'Vertex with id NonExistentVertex not found.',
+        createError('VERTEX_NOT_FOUND', 'NonExistentVertex').message,
       );
     }
   });

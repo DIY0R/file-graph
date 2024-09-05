@@ -10,7 +10,7 @@ import {
   uuidType,
 } from '../interfaces';
 import { StorageFile } from './storage.file';
-import { AsyncTaskQueue, uuid } from '../utils';
+import { AsyncTaskQueue, uuid, createError } from '../utils';
 
 class FileGraphIml implements FileGraphAbstract {
   constructor(
@@ -93,8 +93,9 @@ class FileGraphIml implements FileGraphAbstract {
       const index = ids.indexOf(vertex.id);
       if (index === -1) return;
       const nextVertexId = ids[index + 1];
-      if (nextVertexId && !vertex.links.includes(nextVertexId))
+      if (nextVertexId && !vertex.links.includes(nextVertexId)) {
         return { links: [...vertex.links, nextVertexId] };
+      }
     };
 
     const updateResult = await this.storageFile.updateLine(updater);
@@ -107,12 +108,14 @@ class FileGraphIml implements FileGraphAbstract {
   ): Promise<boolean> {
     return this.updateArc(targetVertexId, vertex => {
       if (vertex.id !== sourceVertexId) return;
-      if (!vertex.links.includes(targetVertexId))
-        return { links: [...vertex.links, targetVertexId] };
-
-      throw new Error(
-        `targetVertexId: ${targetVertexId} already exists in vertex ${sourceVertexId}`,
-      );
+      if (vertex.links.includes(targetVertexId)) {
+        throw createError(
+          'TARGET_VERTEX_ALREADY_EXISTS',
+          targetVertexId,
+          sourceVertexId,
+        );
+      }
+      return { links: [...vertex.links, targetVertexId] };
     });
   }
 
@@ -122,12 +125,14 @@ class FileGraphIml implements FileGraphAbstract {
   ): Promise<boolean> {
     return this.updateArc(targetVertexId, vertex => {
       if (vertex.id !== sourceVertexId) return;
-      if (vertex.links.includes(targetVertexId))
-        return { links: vertex.links.filter(v => v !== targetVertexId) };
-
-      throw new Error(
-        `targetVertexId: ${targetVertexId} don't exists in vertex ${sourceVertexId}`,
-      );
+      if (!vertex.links.includes(targetVertexId)) {
+        throw createError(
+          'TARGET_VERTEX_DOES_NOT_EXIST',
+          targetVertexId,
+          sourceVertexId,
+        );
+      }
+      return { links: vertex.links.filter(v => v !== targetVertexId) };
     });
   }
 
@@ -138,8 +143,9 @@ class FileGraphIml implements FileGraphAbstract {
     const targetVertexExists = await this.findOne(
       vertex => vertex.id === sourceVertexId,
     );
-    if (!targetVertexExists)
-      throw new Error(`Target vertex with ID "${targetVertexId}" not found`);
+    if (!targetVertexExists) {
+      throw createError('TARGET_VERTEX_NOT_FOUND', targetVertexId);
+    }
 
     return targetVertexExists.links.includes(targetVertexId);
   }
@@ -148,13 +154,11 @@ class FileGraphIml implements FileGraphAbstract {
     vertexId: uuidType,
     maxLevel: number,
   ): Promise<IVertexTree<T>[]> {
-    if (maxLevel < 0) throw new Error('Level must be a non-negative integer.');
+    if (maxLevel < 0) throw createError('NEGATIVE_LEVEL');
     const startingVertex = await this.findOne<T>(
       vertex => vertex.id === vertexId,
     );
-
-    if (!startingVertex)
-      throw new Error(`Vertex with id ${vertexId} not found.`);
+    if (!startingVertex) throw createError('VERTEX_NOT_FOUND', vertexId);
 
     const resultVertices: IVertexTree<T>[] = [];
     const queue = [{ vertex: startingVertex, currentLevel: 0 }];
@@ -187,8 +191,9 @@ class FileGraphIml implements FileGraphAbstract {
       const targetVertexExists = await this.findOne(
         vertex => vertex.id === targetVertexId,
       );
-      if (!targetVertexExists)
-        throw new Error(`Target vertex with ID "${targetVertexId}" not found`);
+      if (!targetVertexExists) {
+        throw createError('TARGET_VERTEX_NOT_FOUND', targetVertexId);
+      }
 
       const updateResult = await this.storageFile.updateLine(updater);
       return updateResult;
