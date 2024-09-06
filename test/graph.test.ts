@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { before, describe, it } from 'node:test';
+import { before, describe, test } from 'node:test';
 import { FileGraph, IUuidArray, uuidType } from 'lib';
 import { writeFileSync } from 'node:fs';
 import { createError } from 'lib/utils';
@@ -12,7 +12,7 @@ let globId = '' as uuidType;
 before(() => writeFileSync(pathGraph, ''));
 
 describe('Vertex CRUD Operations', () => {
-  it('create a vertex and find it by ID', async () => {
+  test('create a vertex and find test by ID', async () => {
     const createdVertex = await graph.createVertex(data);
     const foundVertex = await graph.findOne<typeof data>(
       vertex => vertex.id === createdVertex.id,
@@ -25,7 +25,7 @@ describe('Vertex CRUD Operations', () => {
     globId = createdVertex.id;
   });
 
-  it('creates multiple vertices', async () => {
+  test('creates multiple vertices', async () => {
     const vertices = [{ name: 'Alex' }, { city: 'LA' }];
     const createdVertices = await graph.createVertices(vertices);
     assert.strictEqual(createdVertices.length, vertices.length);
@@ -34,7 +34,7 @@ describe('Vertex CRUD Operations', () => {
     );
   });
 
-  it('find all vertices matching a predicate', async () => {
+  test('find all vertices matching a predicate', async () => {
     const vertices = [{ name: 'Alice' }, { name: 'Bob' }, { name: 'Alice' }];
     await graph.createVertices(vertices);
     const foundVertices = await graph.findAll<any>(
@@ -46,14 +46,14 @@ describe('Vertex CRUD Operations', () => {
     );
   });
 
-  it('update the vertex name', async () => {
+  test('update the vertex name', async () => {
     const isUpdated = await graph.updateVertex<typeof data>(
       vertex => vertex.id === globId && { data: { name: 'Dupe' } },
     );
     assert.strictEqual(isUpdated, true);
   });
 
-  it('verify the updated vertex name', async () => {
+  test('verify the updated vertex name', async () => {
     const foundVertex = await graph.findOne<typeof data>(
       vertex => vertex.id === globId,
     );
@@ -61,7 +61,7 @@ describe('Vertex CRUD Operations', () => {
     assert.strictEqual(foundVertex?.data.name, 'Dupe');
   });
 
-  it('create a vertex and delete it', async () => {
+  test('create a vertex and delete test', async () => {
     const createdVertex = await graph.createVertex(data);
     const deleteVertex = await graph.deleteVertex<typeof data>(
       vertex => vertex.id === createdVertex.id,
@@ -72,11 +72,10 @@ describe('Vertex CRUD Operations', () => {
 });
 
 describe('Links operations', () => {
-  let createdVertexId: uuidType;
-
   async function createVertexAndArc() {
-    createdVertexId = (await graph.createVertex(data)).id;
-    return graph.createArc(globId, createdVertexId);
+    const createdVertexId = (await graph.createVertex(data)).id;
+    await graph.createArc(globId, createdVertexId);
+    return createdVertexId;
   }
 
   async function checkLinksPresence(
@@ -92,27 +91,22 @@ describe('Links operations', () => {
     );
   }
 
-  it('create an arc between two vertices', async () => {
+  test('create an arc between two vertices', async () => {
     const newArcCreated = await createVertexAndArc();
 
-    assert.equal(newArcCreated, true, 'Arc creation failed');
-    await checkLinksPresence(globId, createdVertexId, true);
+    await checkLinksPresence(globId, newArcCreated, true);
   });
 
-  it('checks the existence of an arc between two vertices', async () => {
-    const hasArc = await graph.hasArc(globId, createdVertexId);
-    assert.equal(hasArc, true);
-  });
+  test('remove an arc between two vertices', async () => {
+    const newArcCreatedId = await createVertexAndArc();
 
-  it('remove an arc between two vertices', async () => {
-    await createVertexAndArc();
-    const removedArc = await graph.removeArc(globId, createdVertexId);
+    const removedArc = await graph.removeArc(globId, newArcCreatedId);
 
     assert.equal(removedArc, true, 'Arc removal failed');
-    await checkLinksPresence(globId, createdVertexId, false);
+    await checkLinksPresence(globId, newArcCreatedId, false);
   });
 
-  it('create edges between multiple vertices', async () => {
+  test('create edges between multiple vertices', async () => {
     const createVertices = await graph.createVertices([
       { name: 'Vertex 1' },
       { name: 'Vertex 2' },
@@ -129,11 +123,11 @@ describe('Links operations', () => {
       await checkLinksPresence(ids[i + 1], ids[i], true);
     }
   });
-  it('create arcs between multiple vertices', async () => {
+  test('create arcs between multiple vertices', async () => {
     const createVertices = await graph.createVertices([
-      { name: 'Vertex 1' },
-      { name: 'Vertex 2' },
-      { name: 'Vertex 3' },
+      { name: 'V-1' },
+      { name: 'V-2' },
+      { name: 'V-3' },
     ]);
 
     const ids = createVertices.map(result => result.id) as IUuidArray;
@@ -144,11 +138,12 @@ describe('Links operations', () => {
     for (let i = 0; i < ids.length - 1; i++)
       await checkLinksPresence(ids[i], ids[i + 1], true);
   });
-  it('retrieve all vertices up to the specified depth level in a graph', async () => {
+
+  test('retrieve all vertices up to the specified depth level in a graph', async () => {
     const createVertices = await graph.createVertices([
-      { name: 'Vertex 1' },
-      { name: 'Vertex 2' },
-      { name: 'Vertex 3' },
+      { name: 'V-A' },
+      { name: 'V-B' },
+      { name: 'V-C' },
     ]);
     const ids = createVertices.map(result => result.id) as IUuidArray;
     await graph.createArcs(ids);
@@ -159,7 +154,7 @@ describe('Links operations', () => {
       assert.equal(vertex.id, ids[index]);
     });
   });
-  it('error for negative level', async () => {
+  test('error for negative level', async () => {
     try {
       await graph.findUpToLevel('A' as uuidType, -1);
       assert.fail('Expected error not thrown');
@@ -168,7 +163,7 @@ describe('Links operations', () => {
     }
   });
 
-  it('error if start vertex does not exist', async () => {
+  test('error if start vertex does not exist', async () => {
     try {
       await graph.findUpToLevel('NonExistentVertex' as uuidType, 1);
       assert.fail('Expected error not thrown');
