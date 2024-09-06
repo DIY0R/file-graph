@@ -2,7 +2,19 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [0.10.0](https://github.com/DIY0R/file-graph/compare/0.9.1...0.10.0)
+
+> 6 September 2024
+
+- refactor: error handling by extracting messages [`673fd4d`](https://github.com/DIY0R/file-graph/commit/673fd4d368d467aa6c95398dc4c2e895227d8948)
+- refactor(test): rewrite to test fn [`4dbf977`](https://github.com/DIY0R/file-graph/commit/4dbf977eb51eacfa1b49b55307e1b9ae7f4d9d93)
+- feat: add public isConnected method [`6cf1e93`](https://github.com/DIY0R/file-graph/commit/6cf1e936f59b31a93188825fd4c42d45656942d1)
+- feat: add public forEachVertex method [`99a2e97`](https://github.com/DIY0R/file-graph/commit/99a2e97260812254fade68fb47799b17b64795d0)
+- test: add unit tests for isConnected  method [`ac0ae22`](https://github.com/DIY0R/file-graph/commit/ac0ae229b6a3e7f075a8bca513ec87eb817c09eb)
+
 #### [0.9.1](https://github.com/DIY0R/file-graph/compare/0.9.0...0.9.1)
+
+> 3 September 2024
 
 - fix: add type to createArcs [`935e47e`](https://github.com/DIY0R/file-graph/commit/935e47ef91859c727999629d4d18092dd67cb307)
 - refactor: remove tmp file before run tests [`a14d1a4`](https://github.com/DIY0R/file-graph/commit/a14d1a46266e302e299b4f2c76566949073570be)
@@ -63,35 +75,25 @@ All notable changes to this project will be documented in this file. Dates are d
 - feat: add public hasArc method [`6c41f68`](https://github.com/DIY0R/file-graph/commit/6c41f68305fe24aac87a4ea6789392a530b598b9)
 - test: check existence of arc between two vertices [`b30ed79`](https://github.com/DIY0R/file-graph/commit/b30ed799b39b5db9ae75576518adebb64c458e15)
 
-#### [0.4.0](https://github.com/DIY0R/file-graph/compare/0.3.26...0.4.0)
+#### [0.4.0](https://github.com/DIY0R/file-graph/compare/0.0.1...0.4.0)
 
 > 18 August 2024
 
-- feat: add public createArc method [`0f3396e`](https://github.com/DIY0R/file-graph/commit/0f3396e1d11e8912f2ccf269914217058809d0b5)
-- feat: add public removeArc method [`9ce32d0`](https://github.com/DIY0R/file-graph/commit/9ce32d0c93b244d557c93a05e6110865b7e670d6)
-- refactor: add data attribute in vertex [`6b3ae4e`](https://github.com/DIY0R/file-graph/commit/6b3ae4e163862f9e61a51a4c6daaf8527404cfd9)
-- test: add unit tests removeArc method [`32da87b`](https://github.com/DIY0R/file-graph/commit/32da87b345f6ccb11eac0174239315dd25071b5a)
-- test: create an arc between two vertice [`2d13779`](https://github.com/DIY0R/file-graph/commit/2d137795dd0d8f2e47169439bac86b65270c6287)
-- refactor: update jsdoc [`89ac152`](https://github.com/DIY0R/file-graph/commit/89ac152744b2e2eb7eb03177b3623740991d3496)
-
-#### [0.3.26](https://github.com/DIY0R/file-graph/compare/0.3.23...0.3.26)
-
-> 13 August 2024
-
-- perf: added async task queue support for file operations [`d37a916`](https://github.com/DIY0R/file-graph/commit/d37a916c4528340d00ad41c04980a100f15c54f4)
-- fix(lib): duplicate calls close stream [`a373cf3`](https://github.com/DIY0R/file-graph/commit/a373cf3f9829b356d66213c598836c53c50443c8)
-
-#### [0.3.23](https://github.com/DIY0R/file-graph/compare/0.0.1...0.3.23)
-
-> 11 August 2024
-
 - test: set up tests [`845a7cb`](https://github.com/DIY0R/file-graph/commit/845a7cb3b6cc7aafeba1ab1da5e19df92ccb1e97)
 - feat(lib): add public method updateVertex [`2fac83d`](https://github.com/DIY0R/file-graph/commit/2fac83dd7aff0b09bf022896a7663c03eb345bd3)
+- feat: add public createArc method [`0f3396e`](https://github.com/DIY0R/file-graph/commit/0f3396e1d11e8912f2ccf269914217058809d0b5)
 - feat(lib): create vertex and find [`0133268`](https://github.com/DIY0R/file-graph/commit/0133268bf94f469bea87960dc27c0fcb7af94ee6)
+- feat: add public removeArc method [`9ce32d0`](https://github.com/DIY0R/file-graph/commit/9ce32d0c93b244d557c93a05e6110865b7e670d6)
+- refactor: add data attribute in vertex [`6b3ae4e`](https://github.com/DIY0R/file-graph/commit/6b3ae4e163862f9e61a51a4c6daaf8527404cfd9)
 - feat(lib): add public method deleteVertex [`721ec66`](https://github.com/DIY0R/file-graph/commit/721ec6606cd3cc2c9dc9a801ecb449dd634c356e)
 - perf(lib): pass findOne method predicate fn [`1d69dfd`](https://github.com/DIY0R/file-graph/commit/1d69dfddfbd7120de822d42364e300db9f331387)
+- test: add unit tests removeArc method [`32da87b`](https://github.com/DIY0R/file-graph/commit/32da87b345f6ccb11eac0174239315dd25071b5a)
 - style(test):  better readability and accuracy [`93164d9`](https://github.com/DIY0R/file-graph/commit/93164d9fd1de2929a7054e37d33337c39c182093)
 - test: check updated vertex [`729472a`](https://github.com/DIY0R/file-graph/commit/729472ace5f71d3004d11f8af86d0b41a900362c)
+- perf: added async task queue support for file operations [`d37a916`](https://github.com/DIY0R/file-graph/commit/d37a916c4528340d00ad41c04980a100f15c54f4)
+- test: create an arc between two vertice [`2d13779`](https://github.com/DIY0R/file-graph/commit/2d137795dd0d8f2e47169439bac86b65270c6287)
+- fix(lib): duplicate calls close stream [`a373cf3`](https://github.com/DIY0R/file-graph/commit/a373cf3f9829b356d66213c598836c53c50443c8)
+- refactor: update jsdoc [`89ac152`](https://github.com/DIY0R/file-graph/commit/89ac152744b2e2eb7eb03177b3623740991d3496)
 - test: check deleted vertex [`1af21cc`](https://github.com/DIY0R/file-graph/commit/1af21cc40df565f2a7681d59a1140846bd084582)
 - perf(test): create Vertex and findOne [`4763523`](https://github.com/DIY0R/file-graph/commit/476352396eaafba5b5c0d2e79ab253650f85ba5d)
 - refactor(lib): define callback function type [`18ee580`](https://github.com/DIY0R/file-graph/commit/18ee5802143e56254a4d7b495e9418c1d41facec)
