@@ -174,4 +174,17 @@ describe('Links operations', () => {
       );
     }
   });
+
+  test('check if two vertices are connected', async () => {
+    const createVertices = await graph.createVertices([
+      { name: 'V-0' },
+      { name: 'V-0-1' },
+      { name: 'V-1' },
+    ]);
+    const ids = createVertices.map(result => result.id) as IUuidArray;
+    await graph.createArcs(ids);
+
+    const result = await graph.isConnected(ids[0], ids.at(-1));
+    assert.equal(result, true);
+  });
 });
