@@ -182,6 +182,34 @@ class FileGraphIml implements FileGraphAbstract {
 
     return resultVertices;
   }
+  public async isConnected(
+    sourceVertexId: uuidType,
+    targetVertexId: uuidType,
+  ): Promise<boolean> {
+    const startingVertex = await this.findOne(
+      vertex => vertex.id === sourceVertexId,
+    );
+    if (!startingVertex) throw createError('VERTEX_NOT_FOUND', sourceVertexId);
+    const stack: IVertex<object>[] = [startingVertex];
+    const visited = new Set();
+    while (stack.length > 0) {
+      const currentVertex = stack.pop();
+      if (!currentVertex) continue;
+      if (currentVertex.id === targetVertexId) return true;
+      visited.add(currentVertex.id);
+
+      const vertexLinks = currentVertex.links;
+      if (!vertexLinks.length) continue;
+
+      await this.storageFile.searchLine(linkedVertex => {
+        const isUnvisited =
+          vertexLinks.includes(linkedVertex.id) &&
+          !visited.has(linkedVertex.id);
+        if (isUnvisited) stack.push(linkedVertex);
+      });
+    }
+    return false;
+  }
 
   private updateArc(
     targetVertexId: uuidType,

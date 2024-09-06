@@ -180,4 +180,16 @@ export abstract class FileGraphAbstract {
     vertexId: uuidType,
     maxLevel: number,
   ): Promise<IVertex<T>[]>;
+
+  /**
+   * Checks if there is a path between two vertices in the graph using Depth-First Search (DFS).
+   *
+   * @param {uuidType} sourceVertexId - The ID of the starting vertex.
+   * @param {uuidType} targetVertexId - The ID of the target vertex.
+   * @returns {Promise<boolean>} - Returns a promise that resolves to `true` if a path exists between the vertices, otherwise `false`.
+   */
+  public abstract isConnected(
+    sourceVertexId: uuidType,
+    targetVertexId: uuidType,
+  ): Promise<boolean>;
 }
