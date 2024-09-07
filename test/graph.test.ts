@@ -72,10 +72,19 @@ describe('Vertex CRUD Operations', () => {
 });
 
 describe('Links operations', () => {
-  async function createVertexAndArc() {
+  async function createArcGlobalId() {
     const createdVertexId = (await graph.createVertex(data)).id;
     await graph.createArc(globId, createdVertexId);
     return createdVertexId;
+  }
+  async function createVertexArcs(length: number) {
+    const vertices = Array.from({ length }, (_, i) => ({
+      name: `V-${i}`,
+    }));
+    const createVertices = await graph.createVertices(vertices);
+    const ids = createVertices.map(result => result.id) as IUuidArray;
+    await graph.createArcs(ids);
+    return { ids, vertices: createVertices };
   }
 
   async function checkLinksPresence(
@@ -92,13 +101,13 @@ describe('Links operations', () => {
   }
 
   test('create an arc between two vertices', async () => {
-    const newArcCreated = await createVertexAndArc();
+    const newArcCreated = await createArcGlobalId();
 
     await checkLinksPresence(globId, newArcCreated, true);
   });
 
   test('remove an arc between two vertices', async () => {
-    const newArcCreatedId = await createVertexAndArc();
+    const newArcCreatedId = await createArcGlobalId();
 
     const removedArc = await graph.removeArc(globId, newArcCreatedId);
 
@@ -124,31 +133,16 @@ describe('Links operations', () => {
     }
   });
   test('create arcs between multiple vertices', async () => {
-    const createVertices = await graph.createVertices([
-      { name: 'V-1' },
-      { name: 'V-2' },
-      { name: 'V-3' },
-    ]);
-
-    const ids = createVertices.map(result => result.id) as IUuidArray;
-    const edgeCreated = await graph.createArcs(ids);
-
-    assert.equal(edgeCreated, true, 'Edge creation failed');
-
+    const { ids } = await createVertexArcs(12);
     for (let i = 0; i < ids.length - 1; i++)
       await checkLinksPresence(ids[i], ids[i + 1], true);
   });
 
   test('retrieve all vertices up to the specified depth level in a graph', async () => {
-    const createVertices = await graph.createVertices([
-      { name: 'V-A' },
-      { name: 'V-B' },
-      { name: 'V-C' },
-    ]);
-    const ids = createVertices.map(result => result.id) as IUuidArray;
-    await graph.createArcs(ids);
-    const graphTree = await graph.findUpToLevel(createVertices[0].id, 2);
-    assert.equal(graphTree.length, 3);
+    const count = 30;
+    const { ids, vertices } = await createVertexArcs(count);
+    const graphTree = await graph.findUpToLevel(vertices[0].id, count);
+    assert.equal(graphTree.length, count);
     graphTree.forEach((vertex, index) => {
       assert.equal(vertex.level, index);
       assert.equal(vertex.id, ids[index]);
@@ -176,14 +170,7 @@ describe('Links operations', () => {
   });
 
   test('check if two vertices are connected', async () => {
-    const createVertices = await graph.createVertices([
-      { name: 'V-0' },
-      { name: 'V-0-1' },
-      { name: 'V-1' },
-    ]);
-    const ids = createVertices.map(result => result.id) as IUuidArray;
-    await graph.createArcs(ids);
-
+    const { ids } = await createVertexArcs(30);
     const result = await graph.isConnected(ids[0], ids.at(-1));
     assert.equal(result, true);
   });
