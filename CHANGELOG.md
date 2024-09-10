@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [0.11.0](https://github.com/DIY0R/file-graph/compare/0.10.0...0.11.0)
+
+- feat: add public searchVerticesFrom method [`953c782`](https://github.com/DIY0R/file-graph/commit/953c782ab795193c61d2cf294b3c5816201feba8)
+- refactor(test): simplify vertex and arc creation logic [`f122d48`](https://github.com/DIY0R/file-graph/commit/f122d48991b2aa3e04ba1dfda765f8ca26b97075)
+- test: add unit tests for searchVerticesFrom method [`fec47b5`](https://github.com/DIY0R/file-graph/commit/fec47b566fb05af04f6a9c972d5e2536e03e5754)
+- refactor: change path checking method name to hasPath [`9c4424c`](https://github.com/DIY0R/file-graph/commit/9c4424ced3c2bb7de575e37803ed556245128655)
+
 #### [0.10.0](https://github.com/DIY0R/file-graph/compare/0.9.1...0.10.0)
 
 > 6 September 2024
