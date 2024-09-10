@@ -201,7 +201,7 @@ export abstract class FileGraphAbstract {
    * @param {uuidType} targetVertexId - The ID of the target vertex.
    * @returns {Promise<boolean>} - Returns a promise that resolves to `true` if a path exists between the vertices, otherwise `false`.
    */
-  public abstract isConnected(
+  public abstract hasPath(
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
   ): Promise<boolean>;

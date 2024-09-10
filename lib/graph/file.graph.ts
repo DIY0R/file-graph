@@ -180,7 +180,7 @@ class FileGraphIml implements FileGraphAbstract {
     return resultVertices;
   }
 
-  public async isConnected(
+  public async hasPath(
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
   ): Promise<boolean> {

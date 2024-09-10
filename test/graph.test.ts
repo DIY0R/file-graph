@@ -172,7 +172,7 @@ describe('Links operations', () => {
 
   test('check if two vertices are connected', async () => {
     const { ids } = await createVertexArcs(30);
-    const result = await graph.isConnected(ids[0], ids.at(-10));
+    const result = await graph.hasPath(ids[0], ids.at(-10));
     assert.equal(result, true);
   });
 
