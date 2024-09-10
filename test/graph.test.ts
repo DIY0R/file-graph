@@ -80,6 +80,7 @@ describe('Links operations', () => {
   async function createVertexArcs(length: number) {
     const vertices = Array.from({ length }, (_, i) => ({
       name: `V-${i}`,
+      num: i + 1,
     }));
     const createVertices = await graph.createVertices(vertices);
     const ids = createVertices.map(result => result.id) as IUuidArray;
@@ -171,7 +172,19 @@ describe('Links operations', () => {
 
   test('check if two vertices are connected', async () => {
     const { ids } = await createVertexArcs(30);
-    const result = await graph.isConnected(ids[0], ids.at(-1));
+    const result = await graph.isConnected(ids[0], ids.at(-10));
     assert.equal(result, true);
+  });
+
+  test('vertices that match the predicate ', async () => {
+    const countVertex = 30;
+    const { ids } = await createVertexArcs(countVertex);
+    const check = v => v.data.num % 2 === 0;
+    const result = await graph.searchVerticesFrom<{ num: number }>(
+      ids[0],
+      check,
+    );
+    result.forEach(vertex => assert.equal(check(vertex), true));
+    assert.equal(result.length, countVertex / 2);
   });
 });
