@@ -140,7 +140,7 @@ class FileGraphIml implements FileGraphAbstract {
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
   ): Promise<boolean> {
-    const targetVertexExists = await this.findOne(
+    const targetVertexExists = await this.storageFile.searchLine(
       vertex => vertex.id === sourceVertexId,
     );
     if (!targetVertexExists) {
@@ -155,10 +155,7 @@ class FileGraphIml implements FileGraphAbstract {
     maxLevel: number,
   ): Promise<IVertexTree<T>[]> {
     if (maxLevel < 0) throw createError('NEGATIVE_LEVEL');
-    const startingVertex = await this.findOne<T>(
-      vertex => vertex.id === vertexId,
-    );
-    if (!startingVertex) throw createError('VERTEX_NOT_FOUND', vertexId);
+    const startingVertex = await this.checkVertex<T>(vertexId);
 
     const resultVertices: IVertexTree<T>[] = [];
     const queue = [{ vertex: startingVertex, currentLevel: 0 }];
@@ -182,33 +179,56 @@ class FileGraphIml implements FileGraphAbstract {
 
     return resultVertices;
   }
+
   public async isConnected(
     sourceVertexId: uuidType,
     targetVertexId: uuidType,
   ): Promise<boolean> {
-    const startingVertex = await this.findOne(
-      vertex => vertex.id === sourceVertexId,
-    );
-    if (!startingVertex) throw createError('VERTEX_NOT_FOUND', sourceVertexId);
-    const stack: IVertex<object>[] = [startingVertex];
-    const visited = new Set();
-    while (stack.length > 0) {
-      const currentVertex = stack.pop();
-      if (!currentVertex) continue;
-      if (currentVertex.id === targetVertexId) return true;
+    let isExistVertex = false;
+    await this.traverseGraph(sourceVertexId, vertex => {
+      if (vertex.id == targetVertexId) {
+        isExistVertex = true;
+        return true;
+      }
+    });
+    return isExistVertex;
+  }
+
+  public async searchVerticesFrom<T extends object>(
+    vertexId: uuidType,
+    predicate: IPredicate<T>,
+  ): Promise<IVertex<T>[]> {
+    const results: IVertex<T>[] = [];
+    await this.traverseGraph<T>(vertexId, vertex => {
+      if (predicate(vertex)) results.push(vertex);
+    });
+    return results;
+  }
+
+  private async traverseGraph<T extends object>(
+    startVertexId: uuidType,
+    action: ICallbackVertex<T>,
+  ): Promise<void> {
+    const startingVertex = await this.checkVertex<T>(startVertexId);
+    const queue: IVertex<T>[] = [startingVertex];
+    const visited = new Set<uuidType>();
+
+    while (queue.length > 0) {
+      const currentVertex = queue.pop();
       visited.add(currentVertex.id);
+
+      const abort = action(currentVertex);
+      if (abort) return;
 
       const vertexLinks = currentVertex.links;
       if (!vertexLinks.length) continue;
-
-      await this.storageFile.searchLine(linkedVertex => {
+      await this.storageFile.searchLine<T>(linkedVertex => {
         const isUnvisited =
           vertexLinks.includes(linkedVertex.id) &&
           !visited.has(linkedVertex.id);
-        if (isUnvisited) stack.push(linkedVertex);
+        if (isUnvisited) queue.push(linkedVertex);
       });
     }
-    return false;
   }
 
   private updateArc(
@@ -216,7 +236,7 @@ class FileGraphIml implements FileGraphAbstract {
     updater: IPredicate<object> | IUpdater<object>,
   ): Promise<boolean> {
     return this.asyncTaskQueue.addTask<boolean>(async () => {
-      const targetVertexExists = await this.findOne(
+      const targetVertexExists = await this.storageFile.searchLine(
         vertex => vertex.id === targetVertexId,
       );
       if (!targetVertexExists) {
@@ -226,6 +246,14 @@ class FileGraphIml implements FileGraphAbstract {
       const updateResult = await this.storageFile.updateLine(updater);
       return updateResult;
     });
+  }
+
+  private async checkVertex<T extends object>(vertexId: uuidType) {
+    const startingVertex = await this.storageFile.searchLine<T>(
+      vertex => vertex.id === vertexId,
+    );
+    if (!startingVertex) throw createError('VERTEX_NOT_FOUND', vertexId);
+    return startingVertex;
   }
 
   private vertexTemplate<T extends object>(data: T): IVertex<T> {

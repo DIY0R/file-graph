@@ -182,6 +182,19 @@ export abstract class FileGraphAbstract {
   ): Promise<IVertex<T>[]>;
 
   /**
+   * Performs a search starting from the given vertex and returns all vertices that match the provided predicate.
+   *
+   * @template T - The type of data contained in the vertices.
+   * @param {uuidType} vertexId - The ID of the starting vertex for the search.
+   * @param {IPredicate<T>} predicate - A function used to evaluate each vertex. Only vertices that satisfy the predicate will be included in the result.
+   * @returns {Promise<IVertex<T>[]>} - A promise that resolves to an array of vertices that match the predicate.
+   */
+  public abstract searchVerticesFrom<T extends object>(
+    vertexId: uuidType,
+    predicate: IPredicate<T>,
+  ): Promise<IVertex<T>[]>;
+
+  /**
    * Checks if there is a path between two vertices in the graph using Depth-First Search (DFS).
    *
    * @param {uuidType} sourceVertexId - The ID of the starting vertex.
