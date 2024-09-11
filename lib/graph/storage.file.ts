@@ -23,7 +23,6 @@ export class StorageFile {
     const vertexSer = Array.isArray(vertex)
       ? vertex.map(this.serializer).join('\n') + '\n'
       : this.serializer(vertex) + '\n';
-
     return appendFile(this.path, vertexSer);
   }
 

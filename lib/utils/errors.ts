@@ -14,7 +14,6 @@ const ERRORS = {
 const createError = (type: keyof typeof ERRORS, ...args: any[]) => {
   const errorTemplate: string | ((...args: any[]) => string) = ERRORS[type];
   if (!errorTemplate) throw new Error('Unknown error type');
-
   return new Error(
     typeof errorTemplate === 'function'
       ? errorTemplate(...args)

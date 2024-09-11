@@ -9,7 +9,6 @@ export interface IVertex<T extends object> {
 export interface IVertexTree<T extends object> extends IVertex<T> {
   level: number;
 }
-
 export type IUuidArray = [uuidType, ...uuidType[]];
 export type IPredicate<T extends object> = (vertex: IVertex<T>) => boolean;
 export type ICallbackVertex<T extends object> = (
