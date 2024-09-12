@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [0.11.1](https://github.com/DIY0R/file-graph/compare/0.11.0...0.11.1)
+
+- fix: operation not permitted [`e82435e`](https://github.com/DIY0R/file-graph/commit/e82435ecad39fe519f82ddf50f9fce70bb4f86eb)
+- test: add test for error if target vertex exists [`3522336`](https://github.com/DIY0R/file-graph/commit/35223369e1770871ea16f38445010d3096ce3aaf)
+
 #### [0.11.0](https://github.com/DIY0R/file-graph/compare/0.10.0...0.11.0)
+
+> 10 September 2024
 
 - feat: add public searchVerticesFrom method [`953c782`](https://github.com/DIY0R/file-graph/commit/953c782ab795193c61d2cf294b3c5816201feba8)
 - refactor(test): simplify vertex and arc creation logic [`f122d48`](https://github.com/DIY0R/file-graph/commit/f122d48991b2aa3e04ba1dfda765f8ca26b97075)
