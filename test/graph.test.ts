@@ -17,7 +17,6 @@ describe('Vertex CRUD Operations', () => {
     const foundVertex = await graph.findOne<typeof data>(
       vertex => vertex.id === createdVertex.id,
     );
-
     assert.deepStrictEqual(
       { id: createdVertex.id, data, links: [] },
       foundVertex,
@@ -40,7 +39,6 @@ describe('Vertex CRUD Operations', () => {
     const foundVertices = await graph.findAll<any>(
       vertex => vertex.data?.name === 'Alice',
     );
-
     foundVertices.forEach(vertex =>
       assert.strictEqual(vertex.data.name, 'Alice'),
     );
@@ -57,7 +55,6 @@ describe('Vertex CRUD Operations', () => {
     const foundVertex = await graph.findOne<typeof data>(
       vertex => vertex.id === globId,
     );
-
     assert.strictEqual(foundVertex?.data.name, 'Dupe');
   });
 
@@ -66,17 +63,17 @@ describe('Vertex CRUD Operations', () => {
     const deleteVertex = await graph.deleteVertex<typeof data>(
       vertex => vertex.id === createdVertex.id,
     );
-
     assert.equal(deleteVertex, true);
   });
 });
 
 describe('Links operations', () => {
-  async function createArcGlobalId() {
+  async function createArcGlobalId(vId = globId) {
     const createdVertexId = (await graph.createVertex(data)).id;
-    await graph.createArc(globId, createdVertexId);
+    await graph.createArc(vId, createdVertexId);
     return createdVertexId;
   }
+
   async function createVertexArcs(length: number) {
     const vertices = Array.from({ length }, (_, i) => ({
       name: `V-${i}`,
@@ -103,15 +100,26 @@ describe('Links operations', () => {
 
   test('create an arc between two vertices', async () => {
     const newArcCreated = await createArcGlobalId();
-
     await checkLinksPresence(globId, newArcCreated, true);
+  });
+
+  test('error if target vertex already exists in vertex', async () => {
+    const { id: vId } = await graph.createVertex(data);
+
+    const newArcCreated = await createArcGlobalId(vId);
+    try {
+      await graph.createArc(vId, newArcCreated);
+    } catch (error) {
+      assert.strictEqual(
+        error.message,
+        createError('TARGET_VERTEX_ALREADY_EXISTS', newArcCreated, vId).message,
+      );
+    }
   });
 
   test('remove an arc between two vertices', async () => {
     const newArcCreatedId = await createArcGlobalId();
-
     const removedArc = await graph.removeArc(globId, newArcCreatedId);
-
     assert.equal(removedArc, true, 'Arc removal failed');
     await checkLinksPresence(globId, newArcCreatedId, false);
   });
@@ -122,12 +130,9 @@ describe('Links operations', () => {
       { name: 'Vertex 2' },
       { name: 'Vertex 3' },
     ]);
-
     const ids = createVertices.map(result => result.id) as IUuidArray;
     const edgeCreated = await graph.createEdge(ids);
-
     assert.equal(edgeCreated, true, 'Edge creation failed');
-
     for (let i = 0; i < ids.length - 1; i++) {
       await checkLinksPresence(ids[i], ids[i + 1], true);
       await checkLinksPresence(ids[i + 1], ids[i], true);
@@ -149,6 +154,7 @@ describe('Links operations', () => {
       assert.equal(vertex.id, ids[index]);
     });
   });
+
   test('error for negative level', async () => {
     try {
       await graph.findUpToLevel('A' as uuidType, -1);
