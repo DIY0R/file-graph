@@ -19,17 +19,21 @@ class FileGraphIml implements FileGraphAbstract {
   ) {}
 
   public async createVertex<T extends object>(data: T): Promise<IVertex<T>> {
-    const vertex = this.vertexTemplate(data);
-    await this.storageFile.appendFile(vertex);
-    return vertex;
+    return this.asyncTaskQueue.addTask(async () => {
+      const vertex = this.vertexTemplate(data);
+      await this.storageFile.appendFile(vertex);
+      return vertex;
+    });
   }
 
   public async createVertices<T extends object>(
     data: T[],
   ): Promise<IVertex<T>[]> {
-    const vertices = data.map(this.vertexTemplate);
-    await this.storageFile.appendFile(vertices);
-    return vertices;
+    return this.asyncTaskQueue.addTask(async () => {
+      const vertices = data.map(this.vertexTemplate);
+      await this.storageFile.appendFile(vertices);
+      return vertices;
+    });
   }
 
   public updateVertex<T extends object>(
@@ -84,8 +88,8 @@ class FileGraphIml implements FileGraphAbstract {
       );
       return { links };
     };
-    const updateResult = await this.storageFile.updateLine(updater);
-    return updateResult;
+    const updateResult = this.storageFile.updateLine(updater);
+    return this.asyncTaskQueue.addTask(() => updateResult);
   }
 
   public async createArcs(ids: IUuidArray): Promise<boolean> {
@@ -97,9 +101,8 @@ class FileGraphIml implements FileGraphAbstract {
         return { links: [...vertex.links, nextVertexId] };
       }
     };
-
-    const updateResult = await this.storageFile.updateLine(updater);
-    return updateResult;
+    const updateResult = this.storageFile.updateLine(updater);
+    return this.asyncTaskQueue.addTask(() => updateResult);
   }
 
   public createArc(
@@ -146,7 +149,6 @@ class FileGraphIml implements FileGraphAbstract {
     if (!targetVertexExists) {
       throw createError('TARGET_VERTEX_NOT_FOUND', targetVertexId);
     }
-
     return targetVertexExists.links.includes(targetVertexId);
   }
 
@@ -156,7 +158,6 @@ class FileGraphIml implements FileGraphAbstract {
   ): Promise<IVertexTree<T>[]> {
     if (maxLevel < 0) throw createError('NEGATIVE_LEVEL');
     const startingVertex = await this.checkVertex<T>(vertexId);
-
     const resultVertices: IVertexTree<T>[] = [];
     const queue = [{ vertex: startingVertex, currentLevel: 0 }];
 
@@ -164,10 +165,8 @@ class FileGraphIml implements FileGraphAbstract {
       const { vertex, currentLevel } = queue.shift()!;
       const vertexLinks = vertex.links;
       const nextLevel = currentLevel + 1;
-
       if (currentLevel > maxLevel) break;
       resultVertices.push({ ...vertex, level: currentLevel });
-
       if (!vertexLinks.length) continue;
       await this.storageFile.searchLine<T>(vertex => {
         const isNewArc =
@@ -216,10 +215,8 @@ class FileGraphIml implements FileGraphAbstract {
     while (queue.length > 0) {
       const currentVertex = queue.pop();
       visited.add(currentVertex.id);
-
       const abort = action(currentVertex);
       if (abort) return;
-
       const vertexLinks = currentVertex.links;
       if (!vertexLinks.length) continue;
       await this.storageFile.searchLine<T>(linkedVertex => {
@@ -235,7 +232,7 @@ class FileGraphIml implements FileGraphAbstract {
     targetVertexId: uuidType,
     updater: IPredicate<object> | IUpdater<object>,
   ): Promise<boolean> {
-    return this.asyncTaskQueue.addTask<boolean>(async () => {
+    return this.asyncTaskQueue.addTask(async () => {
       const targetVertexExists = await this.storageFile.searchLine(
         vertex => vertex.id === targetVertexId,
       );
