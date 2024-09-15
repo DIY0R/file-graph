@@ -16,7 +16,7 @@ import {
   IVertex,
 } from '../interfaces';
 
-export class StorageFile {
+class StorageFile {
   constructor(private readonly path: string) {}
 
   public async appendFile<T extends object>(vertex: T): Promise<void> {
@@ -103,3 +103,5 @@ export class StorageFile {
     }
   }
 }
+
+export default StorageFile;

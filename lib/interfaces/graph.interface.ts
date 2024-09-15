@@ -4,6 +4,7 @@ import {
   IUpdater,
   IUuidArray,
   IVertex,
+  IVertexTree,
   uuidType,
 } from './params.interface';
 
@@ -174,12 +175,12 @@ export abstract class FileGraphAbstract {
    *
    * @param {uuidType} vertexId - The identifier of the starting vertex.
    * @param {number} maxLevel - The depth level for the search.
-   * @returns {Promise<IVertex<T>[]>} An array of vertices at the specified level.
+   * @returns {Promise<IVertexTree<T>[]>} An array of vertices at the specified level.
    */
   public abstract findUpToLevel<T extends object>(
     vertexId: uuidType,
     maxLevel: number,
-  ): Promise<IVertex<T>[]>;
+  ): Promise<IVertexTree<T>[]>;
 
   /**
    * Performs a search starting from the given vertex and returns all vertices that match the provided predicate.

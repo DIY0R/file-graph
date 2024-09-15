@@ -13,7 +13,6 @@ export class AsyncTaskQueue {
   private async processQueue(): Promise<void> {
     if (this.isProcessing) return;
     this.isProcessing = true;
-
     try {
       while (this.queue.length > 0) {
         const task = this.queue.shift();
@@ -24,3 +23,5 @@ export class AsyncTaskQueue {
     }
   }
 }
+
+export const asyncTaskQueue = new AsyncTaskQueue();

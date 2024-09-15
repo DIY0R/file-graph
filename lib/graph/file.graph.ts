@@ -9,7 +9,7 @@ import {
   IVertexTree,
   uuidType,
 } from '../interfaces';
-import { StorageFile } from './storage.file';
+import StorageFile from './storage.file';
 import { AsyncTaskQueue, uuid, createError } from '../utils';
 
 class FileGraphIml implements FileGraphAbstract {
@@ -258,5 +258,4 @@ class FileGraphIml implements FileGraphAbstract {
   }
 }
 
-export const FileGraph = (path: `${string}.txt`) =>
-  new FileGraphIml(new StorageFile(path), new AsyncTaskQueue());
+export default FileGraphIml;
