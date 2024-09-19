@@ -138,16 +138,28 @@ describe('Links operations', () => {
       await checkLinksPresence(ids[i + 1], ids[i], true);
     }
   });
+
   test('create arcs between multiple vertices', async () => {
     const { ids } = await createVertexArcs(12);
     for (let i = 0; i < ids.length - 1; i++)
       await checkLinksPresence(ids[i], ids[i + 1], true);
   });
 
-  test('retrieve all vertices up to the specified depth level in a graph', async () => {
+  test('retrieve all vertices up to the specified depth level', async () => {
     const count = 30;
     const { ids, vertices } = await createVertexArcs(count);
-    const graphTree = await graph.findUpToLevel(vertices[0].id, count);
+    const graphTree = await graph.findUpToLevel(vertices[0].id, count - 4);
+    assert.equal(graphTree.length, count - 3);
+    graphTree.forEach((vertex, index) => {
+      assert.equal(vertex.level, index);
+      assert.equal(vertex.id, ids[index]);
+    });
+  });
+
+  test('retrieve all extract all vertices', async () => {
+    const count = 15;
+    const { ids, vertices } = await createVertexArcs(count);
+    const graphTree = await graph.findUpToLevel(vertices[0].id);
     assert.equal(graphTree.length, count);
     graphTree.forEach((vertex, index) => {
       assert.equal(vertex.level, index);
@@ -182,7 +194,7 @@ describe('Links operations', () => {
     assert.equal(result, true);
   });
 
-  test('vertices that match the predicate ', async () => {
+  test('vertices that match the predicate', async () => {
     const countVertex = 30;
     const { ids } = await createVertexArcs(countVertex);
     const check = v => v.data.num % 2 === 0;
