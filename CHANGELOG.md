@@ -2,7 +2,17 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [0.12.0](https://github.com/DIY0R/file-graph/compare/0.11.1...0.12.0)
+
+- doc: add installation [`2f28baa`](https://github.com/DIY0R/file-graph/commit/2f28baa1cf91745475b88745d70df5133ea911c2)
+- refactor: refactor correct type exports [`0824d9d`](https://github.com/DIY0R/file-graph/commit/0824d9dd45e1158f9928b99bad2124b3e3eaaf36)
+- test: add tests for findUpToLevel without maxLevel [`3601ddb`](https://github.com/DIY0R/file-graph/commit/3601ddbe2520e49208221ea4d7a7664217b1fda5)
+- feat: make maxLevel optional in findUpToLevel [`def415d`](https://github.com/DIY0R/file-graph/commit/def415df812ac6ed89d069a4154bbc973a2b7336)
+- doc: add intro [`5b7d752`](https://github.com/DIY0R/file-graph/commit/5b7d7524aa32e78261b50b591868f679c4e16f20)
+
 #### [0.11.1](https://github.com/DIY0R/file-graph/compare/0.11.0...0.11.1)
+
+> 12 September 2024
 
 - fix: operation not permitted [`e82435e`](https://github.com/DIY0R/file-graph/commit/e82435ecad39fe519f82ddf50f9fce70bb4f86eb)
 - test: add test for error if target vertex exists [`3522336`](https://github.com/DIY0R/file-graph/commit/35223369e1770871ea16f38445010d3096ce3aaf)
