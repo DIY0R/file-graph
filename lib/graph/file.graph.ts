@@ -154,7 +154,7 @@ class FileGraphIml implements FileGraphAbstract {
 
   public async findUpToLevel<T extends object>(
     vertexId: uuidType,
-    maxLevel: number,
+    maxLevel?: number,
   ): Promise<IVertexTree<T>[]> {
     if (maxLevel < 0) throw createError('NEGATIVE_LEVEL');
     const startingVertex = await this.checkVertex<T>(vertexId);
