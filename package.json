@@ -1,15 +1,26 @@
 {
   "name": "file-graph",
   "version": "0.12.1",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "type": "module",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "./dist"
   ],
-  "type": "module",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs"
+    }
+  },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json && npm run rename:esm",
+    "build": "npm run build:cjs && npm run build:esm",
+    "clean": "rimraf dist",
+    "rename:esm": "/bin/bash ./scripts/fix-mjs.sh",
+    "prepack": "npm run clean && npm run build",
     "prettier": "prettier 'lib/**/**.{js,ts}' 'test/**/**.{js,ts}'  --check --ignore-unknown",
     "prettier:fix": "prettier lib/**/**.{js,ts}' 'test/**/**.{js,ts}' -w",
     "lint": "eslint",
@@ -34,8 +45,9 @@
     "husky": "^9.1.4",
     "prettier": "^3.3.3",
     "release-it": "^17.6.0",
+    "rimraf": "^6.0.1",
     "tsx": "^4.16.5",
-    "typescript": "^5.5.4",
+    "typescript": "^5.6.2",
     "typescript-eslint": "^8.0.0"
   },
   "overrides": {

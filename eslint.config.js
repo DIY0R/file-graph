@@ -31,7 +31,7 @@ export default tseslint.config(
         ...globals.es2020,
       },
       parserOptions: {
-        project: ['tsconfig.json', 'tsconfig.build.json'],
+        project: 'tsconfig.json',
       },
     },
   },

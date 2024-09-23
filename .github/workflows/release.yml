@@ -16,7 +16,7 @@ jobs:
           node-version: '20.x'
           registry-url: https://registry.npmjs.org/
       - run: npm install
-      - run: npm run build
+      - run: npm run prepack
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -33,7 +33,7 @@ jobs:
           node-version: '20.x'
           registry-url: 'https://npm.pkg.github.com'
       - run: npm install
-      - run: npm run build
+      - run: npm run prepack
       - name: Add scope to package name
         run: |
           PACKAGE_NAME=$(jq -r .name package.json)

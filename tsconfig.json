@@ -1,17 +1,16 @@
 {
     "compilerOptions": {
-        "module": "ESNext",
         "declaration": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
+        "declarationDir": "./dist/types",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "target": "ES2021",
         "sourceMap": true,
         "outDir": "./dist",
-        "baseUrl": "./",
-        "moduleResolution": "Node",
+        "baseUrl": ".",
+        "moduleResolution": "node",
         "skipLibCheck": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
         "strictNullChecks": false,
         "noImplicitAny": false,
         "strictBindCallApply": false,
@@ -20,13 +19,16 @@
     },
     "include": [
         "lib/**/*",
-        "test/**/*",
+        "test/**/*"
     ],
     "ignorePatterns": [
         "commitlint.config.js"
     ],
     "exclude": [
+        "dist",
         "node_modules",
         "dist",
+        "jest.config.ts",
+        "tsconfig.json"
     ]
 }
