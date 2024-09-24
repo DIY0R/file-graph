@@ -2,14 +2,9 @@
   "name": "file-graph",
   "version": "0.12.1",
   "main": "./dist/index.js",
-  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "./dist"
-  ],
-  "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.cjs.json",
     "prettier": "prettier 'lib/**/**.{js,ts}' 'test/**/**.{js,ts}'  --check --ignore-unknown",
     "prettier:fix": "prettier lib/**/**.{js,ts}' 'test/**/**.{js,ts}' -w",
     "lint": "eslint",
@@ -59,6 +54,7 @@
     "data-structure",
     "network-analysis"
   ],
+  "files": ["dist"],
   "npm": {
     "publish": true
   },
