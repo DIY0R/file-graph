@@ -1,6 +1,6 @@
 {
   "name": "file-graph",
-  "version": "0.12.1",
+  "version": "0.12.2-1",
   "main": "./dist/cjs/index.js",
   "type": "module",
   "module": "./dist/esm/index.mjs",

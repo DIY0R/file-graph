@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [0.12.2-1](https://github.com/DIY0R/file-graph/compare/0.12.2-0...0.12.2-1)
+
+#### [0.12.2-0](https://github.com/DIY0R/file-graph/compare/0.12.1...0.12.2-0)
+
+> 24 September 2024
+
 #### [0.12.1](https://github.com/DIY0R/file-graph/compare/0.12.0...0.12.1)
+
+> 22 September 2024
 
 - doc: improved documentation text and examples [`d234ab9`](https://github.com/DIY0R/file-graph/commit/d234ab9e1069af8b2bf4f26f5f97f1e894f52868)
 - refactor: esModuleInterop true [`b0174d1`](https://github.com/DIY0R/file-graph/commit/b0174d1558eb52019d3dea98ef2743fc3cacb902)
