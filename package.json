@@ -1,6 +1,6 @@
 {
   "name": "file-graph",
-  "version": "0.12.1",
+  "version": "1.0.0",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
@@ -54,7 +54,9 @@
     "data-structure",
     "network-analysis"
   ],
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "npm": {
     "publish": true
   },
