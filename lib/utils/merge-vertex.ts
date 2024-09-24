@@ -1,4 +1,4 @@
-import { IVertex } from 'lib/interfaces';
+import { IVertex } from '../interfaces';
 
 export const mergeVertices = <T extends object>(
   vertex: IVertex<T>,

@@ -1,4 +1,4 @@
-import { asyncTaskQueue } from 'lib/utils';
+import { asyncTaskQueue } from '../utils';
 import FileGraphIml from './file.graph';
 import StorageFile from './storage.file';
 

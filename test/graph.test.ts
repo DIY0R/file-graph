@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 import { before, describe, test } from 'node:test';
-import { FileGraph, IUuidArray, uuidType } from 'lib';
+import { FileGraph, IUuidArray, uuidType } from '../lib';
 import { writeFileSync } from 'node:fs';
-import { createError } from 'lib/utils';
+import { createError } from '../lib/utils';
 
 const pathGraph = 'data.txt';
 const graph = FileGraph(pathGraph);
