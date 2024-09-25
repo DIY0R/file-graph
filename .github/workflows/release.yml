@@ -8,7 +8,7 @@ on:
 
 jobs:
   publish-npm:
-  environment: publish-npm
+    environment: publish-npm
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

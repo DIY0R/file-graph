@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [1.0.0](https://github.com/DIY0R/file-graph/compare/0.12.1...1.0.0)
+#### [1.0.1](https://github.com/DIY0R/file-graph/compare/1.0.0...1.0.1)
+
+- fix: check all vertices exist [`b0653cf`](https://github.com/DIY0R/file-graph/commit/b0653cfbeba2a065d1bf354b4b06501800142328)
+- fix: premature execution of updateLine before queue processing [`cad659a`](https://github.com/DIY0R/file-graph/commit/cad659a6e7b7bf671fcc67e493beffc8baabff9d)
+
+### [1.0.0](https://github.com/DIY0R/file-graph/compare/0.12.1...1.0.0)
+
+> 25 September 2024
 
 - refactor: use absolute path [`efc7a18`](https://github.com/DIY0R/file-graph/commit/efc7a18438b48215c1cebab6a1c38a4bc5a643b1)
 
