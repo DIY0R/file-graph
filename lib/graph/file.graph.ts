@@ -90,8 +90,9 @@ class FileGraphIml implements FileGraphAbstract {
       );
       return { links };
     };
-    const updateResult = this.storageFile.updateLine(updater);
-    return this.asyncTaskQueue.addTask(() => updateResult);
+    return this.asyncTaskQueue.addTask(() =>
+      this.storageFile.updateLine(updater),
+    );
   }
 
   public async createArcs(ids: IUuidArray): Promise<boolean> {
@@ -105,8 +106,10 @@ class FileGraphIml implements FileGraphAbstract {
         return { links: [...vertex.links, nextVertexId] };
       }
     };
-    const updateResult = this.storageFile.updateLine(updater);
-    return this.asyncTaskQueue.addTask(() => updateResult);
+
+    return this.asyncTaskQueue.addTask(() =>
+      this.storageFile.updateLine(updater),
+    );
   }
 
   public createArc(
