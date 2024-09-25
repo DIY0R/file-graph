@@ -76,6 +76,8 @@ class FileGraphIml implements FileGraphAbstract {
   }
 
   public async createEdge(ids: IUuidArray): Promise<boolean> {
+    const checkVertices = await this.checkVertices(ids);
+    if (!checkVertices) throw createError('MISSING_TRANSMITTED_VERTICES');
     const updater = (vertex: IVertex<object>) => {
       const index = ids.indexOf(vertex.id);
       if (index === -1) return;
@@ -93,6 +95,8 @@ class FileGraphIml implements FileGraphAbstract {
   }
 
   public async createArcs(ids: IUuidArray): Promise<boolean> {
+    const checkVertices = await this.checkVertices(ids);
+    if (!checkVertices) throw createError('MISSING_TRANSMITTED_VERTICES');
     const updater = (vertex: IVertex<object>) => {
       const index = ids.indexOf(vertex.id);
       if (index === -1) return;
@@ -251,6 +255,16 @@ class FileGraphIml implements FileGraphAbstract {
     );
     if (!startingVertex) throw createError('VERTEX_NOT_FOUND', vertexId);
     return startingVertex;
+  }
+
+  private async checkVertices<T extends object>(
+    vertexIds: IUuidArray,
+  ): Promise<boolean> {
+    let existCount = 0;
+    await this.storageFile.searchLine<T>(vertex => {
+      if (vertexIds.includes(vertex.id)) existCount += 1;
+    });
+    return existCount === vertexIds.length;
   }
 
   private vertexTemplate<T extends object>(data: T): IVertex<T> {

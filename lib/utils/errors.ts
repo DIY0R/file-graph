@@ -2,6 +2,8 @@ import { uuidType } from '../interfaces';
 
 const ERRORS = {
   VERTEX_NOT_FOUND: (id: uuidType) => `Vertex with id ${id} not found.`,
+  MISSING_TRANSMITTED_VERTICES:
+    'Some of the transmitted vertices are missing in the graph.',
   TARGET_VERTEX_NOT_FOUND: (id: uuidType) =>
     `Target vertex with ID "${id}" not found.`,
   TARGET_VERTEX_DOES_NOT_EXIST: (targetId: uuidType, sourceId: uuidType) =>

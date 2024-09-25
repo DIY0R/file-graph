@@ -139,10 +139,34 @@ describe('Links operations', () => {
     }
   });
 
+  test('throw error if not all vertices exist when creating an edge', async () => {
+    try {
+      const newVertex = await graph.createVertex({ name: 'Vertex 1' });
+      await graph.createEdge([newVertex.id, 'iID' as uuidType]);
+    } catch (error) {
+      assert.strictEqual(
+        error.message,
+        createError('MISSING_TRANSMITTED_VERTICES').message,
+      );
+    }
+  });
+
   test('create arcs between multiple vertices', async () => {
     const { ids } = await createVertexArcs(12);
     for (let i = 0; i < ids.length - 1; i++)
       await checkLinksPresence(ids[i], ids[i + 1], true);
+  });
+
+  test('throw error if not all vertices exist when creating an arcs', async () => {
+    try {
+      const newVertex = await graph.createVertex({ name: 'Vertex 1' });
+      await graph.createArcs([newVertex.id, 'iID' as uuidType]);
+    } catch (error) {
+      assert.strictEqual(
+        error.message,
+        createError('MISSING_TRANSMITTED_VERTICES').message,
+      );
+    }
   });
 
   test('retrieve all vertices up to the specified depth level', async () => {
