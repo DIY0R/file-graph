@@ -208,6 +208,26 @@ console.log(isEdgeCreated); // true
 
 ---
 
+### `removeEdge(ids: IUuidArray): Promise<boolean>`
+
+Removes the edges (links) between the specified vertices in the graph.
+
+- **Parameters**
+
+  - `ids: IUuidArray` - An array of vertex IDs. The edges between the vertices specified by these IDs will be removed.
+
+- **Returns**
+  - A promise that resolves to `true` if the edge removal was successful.
+
+#### Example:
+
+```typescript
+const isEdgeRemoved = await graph.removeEdge(['id1', 'id2', 'id3']);
+console.log(isEdgeRemoved); // true
+```
+
+---
+
 ### `createArc(sourceVertexId: uuidType, targetVertexId: uuidType): Promise<boolean>`
 
 Creates an arc (directed edge) between two vertices.
