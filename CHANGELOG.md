@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [1.1.0](https://github.com/DIY0R/file-graph/compare/1.0.1...1.1.0)
+
+- feat: add public removeEdge method [`ca1188e`](https://github.com/DIY0R/file-graph/commit/ca1188eace324c6a6d412ad65671be93c04f8639)
+- doc: add section removeEdge function [`abd65dd`](https://github.com/DIY0R/file-graph/commit/abd65ddf545dc9c0091279431a65f86eafb2c479)
+- test: add test for remove edge [`f668c49`](https://github.com/DIY0R/file-graph/commit/f668c49129295f756ec676656a355241428f234e)
+
 #### [1.0.1](https://github.com/DIY0R/file-graph/compare/1.0.0...1.0.1)
+
+> 25 September 2024
 
 - fix: check all vertices exist [`b0653cf`](https://github.com/DIY0R/file-graph/commit/b0653cfbeba2a065d1bf354b4b06501800142328)
 - fix: premature execution of updateLine before queue processing [`cad659a`](https://github.com/DIY0R/file-graph/commit/cad659a6e7b7bf671fcc67e493beffc8baabff9d)
