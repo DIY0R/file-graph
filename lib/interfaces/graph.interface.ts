@@ -108,6 +108,22 @@ export abstract class FileGraphAbstract {
   public abstract createEdge(ids: IUuidArray): Promise<boolean>;
 
   /**
+   * Removes the edges between the specified vertex IDs in the graph.
+   *
+   * This function identifies vertices whose IDs are present in the `ids` array,
+   * and removes the edges (links) between the current vertex and its neighboring vertices
+   * (preceding and following ones in the `ids` array). The function utilizes an asynchronous
+   * task queue to update the storage file with the modified vertex links.
+   *
+   * @param {IUuidArray} ids - An array of vertex UUIDs (Unique Identifiers).
+   *                           The function will remove the edges between these vertex IDs.
+   *
+   * @returns {Promise<boolean>} - A promise that resolves to `true` if the edge removal process is successful,
+   *                               otherwise `false`.
+   */
+  public abstract removeEdge(ids: IUuidArray): Promise<boolean>;
+
+  /**
    * Creates an arc (edge) from one vertex to another in the graph.
    *
    * This method connects the vertex with the specified `sourceVertexId` to the vertex with the specified `targetVertexId`.

@@ -95,6 +95,19 @@ class FileGraphIml implements FileGraphAbstract {
     );
   }
 
+  public async removeEdge(ids: IUuidArray): Promise<boolean> {
+    const updater = (vertex: IVertex<object>) => {
+      const index = ids.indexOf(vertex.id);
+      if (index === -1) return;
+      const neighbors = [ids[index - 1], ids[index + 1]].filter(Boolean);
+      const links = vertex.links.filter(link => !neighbors.includes(link));
+      return { links };
+    };
+    return this.asyncTaskQueue.addTask(() =>
+      this.storageFile.updateLine(updater),
+    );
+  }
+
   public async createArcs(ids: IUuidArray): Promise<boolean> {
     const checkVertices = await this.checkVertices(ids);
     if (!checkVertices) throw createError('MISSING_TRANSMITTED_VERTICES');
@@ -167,7 +180,6 @@ class FileGraphIml implements FileGraphAbstract {
     const startingVertex = await this.checkVertex<T>(vertexId);
     const resultVertices: IVertexTree<T>[] = [];
     const queue = [{ vertex: startingVertex, currentLevel: 0 }];
-
     while (queue.length > 0) {
       const { vertex, currentLevel } = queue.shift()!;
       const vertexLinks = vertex.links;
@@ -218,7 +230,6 @@ class FileGraphIml implements FileGraphAbstract {
     const startingVertex = await this.checkVertex<T>(startVertexId);
     const queue: IVertex<T>[] = [startingVertex];
     const visited = new Set<uuidType>();
-
     while (queue.length > 0) {
       const currentVertex = queue.pop();
       visited.add(currentVertex.id);
@@ -246,7 +257,6 @@ class FileGraphIml implements FileGraphAbstract {
       if (!targetVertexExists) {
         throw createError('TARGET_VERTEX_NOT_FOUND', targetVertexId);
       }
-
       const updateResult = await this.storageFile.updateLine(updater);
       return updateResult;
     });
