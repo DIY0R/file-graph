@@ -151,6 +151,22 @@ describe('Links operations', () => {
     }
   });
 
+  test('remove edges between multiple vertices', async () => {
+    const createVertices = await graph.createVertices([
+      { name: 'Vertex 1' },
+      { name: 'Vertex 2' },
+      { name: 'Vertex 3' },
+    ]);
+    const ids = createVertices.map(result => result.id) as IUuidArray;
+    await graph.createEdge(ids);
+    const edgeRemoved = await graph.removeEdge(ids);
+    assert.equal(edgeRemoved, true, 'Edge remove failed');
+    for (let i = 0; i < ids.length - 1; i++) {
+      await checkLinksPresence(ids[i], ids[i + 1], false);
+      await checkLinksPresence(ids[i + 1], ids[i], false);
+    }
+  });
+
   test('create arcs between multiple vertices', async () => {
     const { ids } = await createVertexArcs(12);
     for (let i = 0; i < ids.length - 1; i++)
