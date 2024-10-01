@@ -10,17 +10,19 @@ The `file-graph` class provides an abstract implementation for graph operations.
 
 ---
 
-# Installation
+## Installation
+
+To install **file-graph** from npm, run the following command:
 
 ```bash
 npm install file-graph
 ```
 
-Alternatively, you can install it from the GitHub registry:
+Alternatively, you can install it from the [GitHub registry](https://github.com/DIY0R/file-graph/pkgs/npm/file-graph).
 
-```bash
-npm install @diy0r/file-graph
-```
+---
+
+This makes it more professional and adds the GitHub registry installation syntax.
 
 ## Creating a Graph Instance
 
