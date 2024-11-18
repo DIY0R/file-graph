@@ -17,27 +17,20 @@ To install **file-graph** from npm, run the following command:
 ```bash
 npm install file-graph
 ```
-
 Alternatively, you can install it from the [GitHub registry](https://github.com/DIY0R/file-graph/pkgs/npm/file-graph).
-
----
-
-This makes it more professional and adds the GitHub registry installation syntax.
 
 ## Creating a Graph Instance
 
 ```ts
-const graph = FileGraph('../graph.txt');
+const graph = FileGraph('graph.txt');
 ```
-
-`FileGraph` accepts a path where the graph data will be stored. The graph object returned is an instance of the `FileGraphAbstract` class, which provides methods for manipulating the graph. You can refer to the [jsDoc documentation](https://www.jsdocs.io/package/file-graph) documentation for more details.
+`FileGraph` accepts a path where the graph data will be stored.The returned object `graph` is an instance of the [FileGraphAbstract](https://www.jsdocs.io/package/file-graph) class, which provides methods for working with the graph.
 
 ## File Structure
 
 After initializing the graph at the specified path, a file will be created where each line represents a vertex. It is recommended not to modify the file contents manually.
 
-Example of a vertex record:
-
+Example of a vertex record: __graph.txt__
 ```json
 {
   "id": "33ef29be-adaa-4509-b306-62a32db7310e", // UUID - unique identifier of the vertex
@@ -368,7 +361,3 @@ Checks if a path exists between two vertices using Depth-First Search (DFS).
 const pathExists = await graph.hasPath('id1', 'id3');
 console.log(pathExists); // true or false
 ```
-
----
-
-This abstract class provides the blueprint for interacting with a graph structure, supporting both simple and complex operations for managing vertices and their relationships. Concrete implementations should define the behavior for storing and retrieving graph data.
